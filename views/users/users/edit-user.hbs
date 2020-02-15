@@ -1,0 +1,78 @@
+<div class="row justify-content-center">
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-body">
+                <h2>Edit User</h2>
+                <form method="POST" novalidate> 
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="form-group">
+                                <label for="menuicon">First Name</label>
+                                <input type="text" id="firstName" name="firstName" value="{{userDetails.firstName}}" class="form-control {{#if firstNameError}}parsley-error{{/if}}" placeholder="First Name">
+                                {{#if firstNameError}}
+                                <ul class="parsley-errors-list filled"><li class="parsley-required">{{firstNameError}}</li></ul>
+                                {{/if}}
+                            </div>
+                            <div class="form-group">
+                                <label for="menuicon">Last Name</label>
+                                <input type="text" id="lastName" name="lastName" value="{{userDetails.lastName}}" class="form-control {{#if lastNameError}}parsley-error{{/if}}" placeholder="Last Name">
+                                {{#if lastNameError}}
+                                <ul class="parsley-errors-list filled"><li class="parsley-required">{{lastNameError}}</li></ul>
+                                {{/if}}
+                            </div>
+                            <div class="form-group">
+                                <label for="physicalAddress">Physical Address</label>
+                                <textarea name="physicalAddress" class="form-control {{#if emailError}}parsley-error{{/if}}" id="physicalAddress" rows="3">{{userDetails.physicalAddress}}</textarea>
+                                {{#if physicalAddressError}}
+                                <ul class="parsley-errors-list filled"><li class="parsley-required">{{physicalAddressError}}</li></ul>
+                                {{/if}}
+                            </div>
+                            <div class="form-group">
+                                <label for="menuicon">Phone Number <em style="color: #a8a8a8">(Include country code)</em></label>
+                                <input type="text" id="phoneNumber" name="phoneNumber"  value="{{userDetails.phoneNumber}}"class="form-control {{#if phoneNumberError}}parsley-error{{/if}}" placeholder="Phone Number">
+                                {{#if phoneNumberError}}
+                                <ul class="parsley-errors-list filled"><li class="parsley-required">{{phoneNumberError}}</li></ul>
+                                {{/if}}
+                            </div>
+                            <input type="hidden" name="userType" value="Administrator">
+                            <div class="form-group mb-3">
+                                <label for="gender">Gender</label>
+                                <select class="form-control {{#if countryError}}parsley-error{{/if}}" data-toggle="select2" id="gender" name="gender">
+                                    <option value="">Select Gender</option>
+                                    <option {{#eq userDetails.gender 'Male'}}selected{{/eq}}>Male</option>
+                                    <option {{#eq userDetails.gender 'Female'}}selected{{/eq}}>Female</option>
+                                </select>
+                                {{#if genderError}}
+                                <ul class="parsley-errors-list filled"><li class="parsley-required">{{genderError}}</li></ul>
+                                {{/if}}
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="dateOfBirth">Date of Birth</label>
+                                <input id="humanfd-datepicker" type="text" name="dateOfBirth" data-provide="datepicker" value="{{userDetails.dateOfBirth}}" class="form-control {{#if dateOfBirthError}}parsley-error{{/if}}" placeholder="Choose date of birth">
+                                {{#if dateOfBirthError}}
+                                <ul class="parsley-errors-list filled"><li class="parsley-required">{{dateOfBirthError}}</li></ul>
+                                {{/if}}
+                            </div>
+                            <div class="form-group">
+                                <label for="country">Country</label>
+                                <select class="form-control {{#if countryError}}parsley-error{{/if}}" data-toggle="select2" name="country">
+                                    <option value="">Select Country</option>
+                                    {{#each countries}}
+                                    <option {{#eq @root.userDetails.country this.name}}selected{{/eq}}>{{this.name}}</option>
+                                    {{/each}}
+                                </select>
+                                {{#if countryError}}
+                                <ul class="parsley-errors-list filled"><li class="parsley-required">{{countryError}}</li></ul>
+                                {{/if}}
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div> <!-- end col-->
+                    </div>
+                    <!-- end row -->
+                </form>
+            </div> <!-- end card-body -->
+        </div> <!-- end card-->
+    </div> <!-- end col-->
+</div>
+<!-- end row-->

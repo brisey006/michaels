@@ -1,0 +1,147 @@
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <!-- Profile -->
+                                <div class="card bg-primary">
+                                    <div class="card-body profile-user-box">
+
+                                        <div class="row">
+                                            <div class="col-sm-8">
+                                                <div class="media">
+                                                    <span class="float-left m-2 mr-4"><img src="{{user.displayImage}}" style="height: 100px;" alt="" class="rounded-circle img-thumbnail"></span>
+                                                    <div class="media-body">
+                                                        <h4 class="mt-1 mb-1 text-white">{{user.firstName}} {{user.lastName}}</h4>
+                                                        <p class="font-13 text-white-50">{{user.userRole.title}}</p>
+
+                                                        <ul class="mb-0 list-inline text-light">
+                                                            <li class="list-inline-item mr-3">
+                                                                <h5 class="mb-1">4</h5>
+                                                                <p class="mb-0 font-13 text-white-50">Departments</p>
+                                                            </li>
+                                                            <li class="list-inline-item">
+                                                                <h5 class="mb-1">5482</h5>
+                                                                <p class="mb-0 font-13 text-white-50">Actions</p>
+                                                            </li>
+                                                        </ul>
+                                                    </div> <!-- end media-body-->
+                                                </div>
+                                            </div> <!-- end col-->
+
+                                            <div class="col-sm-4">
+                                                <div class="text-center mt-sm-0 mt-3 text-sm-right">
+                                                    <button type="button" class="btn btn-light">
+                                                        <i class="mdi mdi-account-edit mr-1"></i> Edit Profile
+                                                    </button>
+                                                </div>
+                                            </div> <!-- end col-->
+                                        </div> <!-- end row -->
+
+                                    </div> <!-- end card-body/ profile-user-box-->
+                                </div><!--end profile/ card -->
+                            </div> <!-- end col-->
+                        </div>
+                        <!-- end row -->
+
+
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <!-- Personal-Information -->
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="header-title mt-0 mb-3">User Information</h4>
+                                        <p class="text-muted font-13">{{user.bio}}</p>
+
+                                        <hr/>
+
+                                        <div class="text-left">
+                                            <p class="text-muted"><strong>Full Name :</strong> <span class="ml-2">{{user.firstName}} {{user.lastName}}</span></p>
+
+                                            {{#if user.phoneNumber}}
+                                                <p class="text-muted"><strong>Mobile :</strong><span class="ml-2">{{user.phoneNumber}}</span></p>
+                                            {{/if}}
+
+                                            <p class="text-muted"><strong>Email :</strong> <span class="ml-2">{{user.email}}</span></p>
+
+                                            {{#if user.address}}
+                                                <p class="text-muted"><strong>Address :</strong><span class="ml-2">{{user.address}}</span></p>
+                                            {{/if}}
+
+                                            {{#if user.gender}}
+                                                <p class="text-muted"><strong>Gender :</strong><span class="ml-2">{{user.gender}}</span></p>
+                                            {{/if}}
+
+                                            {{#if user.dateOfBirth}}
+                                                <p class="text-muted"><strong>Date of birth :</strong><span class="ml-2">{{user.dateOfBirth}}</span></p>
+                                            {{/if}}
+
+                                            {{#if user.country}}
+                                                <p class="text-muted"><strong>Country :</strong><span class="ml-2">{{user.country}}</span></p>
+                                            {{/if}}
+
+                                            <p class="text-muted mb-0"><strong>Elsewhere :</strong>
+                                                <a class="d-inline-block ml-2 text-muted" title="" data-placement="top" data-toggle="tooltip" href="" data-original-title="Facebook"><i class="mdi mdi-facebook"></i></a>
+                                                <a class="d-inline-block ml-2 text-muted" title="" data-placement="top" data-toggle="tooltip" href="" data-original-title="Twitter"><i class="mdi mdi-twitter"></i></a>
+                                                <a class="d-inline-block ml-2 text-muted" title="" data-placement="top" data-toggle="tooltip" href="" data-original-title="Skype"><i class="mdi mdi-skype"></i></a>
+                                            </p>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Personal-Information -->
+
+                            </div> <!-- end col-->
+
+                            <div class="col-lg-8">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <ul class="nav nav-tabs nav-bordered mb-3">
+                                    <li class="nav-item">
+                                        <a href="#info-b1" data-toggle="tab" aria-expanded="false" class="nav-link">
+                                            <i class="mdi mdi-home-variant d-md-none d-block"></i>
+                                            <span class="d-none d-md-block"><i class="uil uil-file-info-alt mr-1"></i>General Information</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#change-b1" data-toggle="tab" aria-expanded="false" class="nav-link active">
+                                            <i class="mdi mdi-settings-outline d-md-none d-block"></i>
+                                            <span class="d-none d-md-block"><i class="uil uil-padlock mr-1"></i>Change Password</span>
+                                        </a>
+                                    </li>
+                                </ul>
+
+                                <div class="tab-content">
+                                    <div class="tab-pane" id="info-b1">
+                                        <p>...</p>
+                                    </div>
+                                    <div class="tab-pane show active" id="change-b1">
+                                        <form name="passwordForm">
+                                            <input type="hidden" name="url" value="{{parseUrl 'change-password' urls}}">
+                                            <div class="form-group">
+                                                <label for="current-password">Current Password</label>
+                                                <input type="password" name="currentPassword" placeholder="Enter current password" id="current-password" class="form-control" autocomplete="off">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="new-password">New Password</label>
+                                                <input type="password" name="newPassword" placeholder="Enter new password" id="new-password" class="form-control" autocomplete="off">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="current-password">Verify New Password</label>
+                                                <input type="password" name="confirmPassword" placeholder="Confirm new password" id="verify-password" class="form-control" autocomplete="off">
+                                            </div>
+
+                                            <div id="error-container"></div>
+
+                                            <button class="btn btn-primary" id="passwordSubmit" type="submit">Submit</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end col -->
+
+                        </div>
+                        <!-- end row -->
+                        <script src="/assets/js/axios.min.js"></script>
+                        <script src="/assets/js/profile.js"></script>

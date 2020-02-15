@@ -1,0 +1,238 @@
+<!--Variables-->
+<input type="hidden" id="menuToggleUrl" value="{{url 'toggle-menu' id=menuData._id}}">
+
+<div class="row">
+    <div class="col-sm-12">
+        <!-- Profile -->
+        <div class="card">
+            <div class="card-body profile-user-box">
+
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div class="media">
+                            <span class="float-left m-1 mr-4" style="cursor: pointer;" data-toggle="modal" data-target="#iconField"><i class="{{menuData.icon}} mr-1" style="font-size: 48px;" class="rounded-circle img-thumbnail"></i></span>
+
+                            <!-- Standard modal content -->
+                            <div id="iconField" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="standard-modalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title" id="iconFieldLabel">Change {{menuData.title}} icon</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label for="title">Icon Name</label>
+                                                <input type="hidden" id="menuId" value="{{menuData._id}}">
+                                                <input type="text" id="iconName" value="{{menuData.icon}}" class="form-control" placeholder="Enter icon name here">
+                                            </div>
+                                            Available Icons: <a href="{{url 'dripicons'}}" target="_blank">Dripicons</a>, 
+                                                            <a href="{{url 'mdicons'}}" target="_blank">MD Icons</a>,
+                                                            <a href="{{url 'unicons'}}" target="_blank">Unicons</a>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                                            <button id="changeIcon" class="btn btn-primary" data-dismiss="modal">Change</button>
+                                        </div>
+                                    </div><!-- /.modal-content -->
+                                </div><!-- /.modal-dialog -->
+                            </div><!-- /.modal -->
+                            
+                            <div class="media-body m-2">
+
+                                <h4 class="my-1">{{menuData.title}}</h4>
+                                <p class="font-13 text-muted"> Module . 
+                                    {{#if menuData.isActive}}
+                                        <span id="status{{menuData._id}}" class="badge badge-success">Active</span>
+                                    {{else}}
+                                        <span id="status{{menuData._id}}" class="badge badge-danger">Deactivated</span>
+                                    {{/if}}
+                                </p>
+                            </div> <!-- end media-body-->
+                        </div>
+                    </div> <!-- end col-->
+
+                    <div class="col-sm-4">
+                        <div class="text-center mt-sm-0 mt-3 text-sm-right m-2">
+                            <div style="float: right;" class="m-2">
+                                {{#if menuData.isActive}}
+                                    <input type="checkbox" id="switch_{{menuData._id}}" onchange="toggleMenu('{{menuData._id}}')" checked data-switch="success"/>
+                                {{else}}
+                                    <input type="checkbox" id="switch_{{menuData._id}}" onchange="toggleMenu('{{menuData._id}}')" data-switch="success"/>
+                                {{/if}}
+                                <label for="switch_{{menuData._id}}" data-on-label="Yes" data-off-label="No" class="mb-0 d-block"></label>
+                                <span style="cursor: pointer;" class="action-icon" data-toggle="modal" data-target="#delete{{menuData._id}}"> <i class="mdi mdi-delete" style="font-size: 24px"></i></span>
+
+                                <!-- Standard modal content -->
+                                <div id="delete{{menuData._id}}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="standard-modalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title" id="modalLabel{{menuData._id}}">Delete {{menuData.title}}</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p style="float: left;">Are you sure you want to delete {{menuData.title}}?</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                                                <a href="{{url 'delete-menu' id=menuData._id}}" class="btn btn-danger">Yes</a>
+                                            </div>
+                                        </div><!-- /.modal-content -->
+                                    </div><!-- /.modal-dialog -->
+                                </div><!-- /.modal -->
+                            </div>
+                        </div>
+                    </div> <!-- end col-->
+                </div> <!-- end row -->
+
+            </div> <!-- end card-body/ profile-user-box-->
+        </div><!--end profile/ card -->
+    </div> <!-- end col-->
+</div>
+<!-- end row -->
+
+
+<div class="row">
+    <div class="col-lg-4">
+        <!-- Messages-->
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title mb-3">MENUS</h4>
+
+                <div class="inbox-widget">
+                    {{#forEach menu}}
+                        <div class="inbox-item">
+                            <div class="inbox-item-img"><i class="{{icon}} mr-1" style="font-size: 32px;" class="rounded-circle img-thumbnail"></i></div>
+                            <p class="inbox-item-author">{{title}}</p>
+                            <p class="inbox-item-text">{{length subMenus}} Sub-menus</p>
+                            <p class="inbox-item-date">
+                                <a href="{{url 'menu-details' id=_id}}" class="btn btn-sm btn-link text-info font-13">View</a>
+                            </p>
+                        </div>
+                    {{/forEach}}
+                </div> <!-- end inbox-widget -->
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+
+    </div> <!-- end col-->
+
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div class="media">
+                            <div class="media-body">
+                                <h4 class="my-1">Sub Menus</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="text-center mt-sm-0 mt-3 text-sm-right">
+                            <a href="{{url 'add-sub-menu' id=menuData._id}}" class="btn btn-primary">Add Sub menu</a>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="table-responsive">
+                    <table class="table table-hover table-centered mb-0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Link</th>
+                                <th>Active</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each menuData.subMenus}}
+                            <input type="hidden" id="_sub_{{this._id}}" value="{{url 'toggle-sub-menu' id=this._id}}">
+                            <tr>
+                                <td>{{title}}</td>
+                                <td><a href="{{url url}}">{{url url}}</a></td>
+                                <td>
+                                    <div>
+                                        {{#if isActive}}
+                                            <input type="checkbox" id="switch_{{this._id}}" onchange="toggleSubMenu('{{this._id}}', '{{@root.menuData._id}}')" checked data-switch="success"/>
+                                        {{else}}
+                                            <input type="checkbox" id="switch_{{this._id}}" onchange="toggleSubMenu('{{this._id}}', '{{@root.menuData._id}}')" data-switch="success"/>
+                                        {{/if}}
+                                        <label for="switch_{{this._id}}" data-on-label="Yes" data-off-label="No" class="mb-0 d-block"></label>
+                                    </div>
+                                </td>
+                                <td class="table-action">
+                                    <a href="javascript: void(0);" class="action-icon" data-toggle="modal" data-target="#modal{{_id}}"> <i class="mdi mdi-delete"></i></a>
+                                </td>
+                            </tr>
+                            <!-- Standard modal content -->
+                            <div id="modal{{_id}}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="standard-modalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title" id="modalLabel{{_id}}">Delete {{title}}</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Are you sure you want to delete {{title}}?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                                            <a href="{{url 'delete-menu' id=_id}}" class="btn btn-danger">Yes</a>
+                                        </div>
+                                    </div><!-- /.modal-content -->
+                                </div><!-- /.modal-dialog -->
+                            </div><!-- /.modal -->
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div> <!-- end table responsive-->
+            </div> <!-- end col-->
+        </div> <!-- end row-->
+
+    </div>
+    <!-- end col -->
+
+</div>
+<!-- end row -->
+
+<script>
+    const toggleMenu = () => {
+        const url = document.getElementById('menuToggleUrl').value;
+        axios.get(url)
+        .then((response) => {
+            console.log(response.data);
+            //location.reload();
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    }
+
+    const toggleSubMenu = (subMenuId) => {
+        const tag = document.getElementById(`switch_${subMenuId}`);
+        const url = document.getElementById(`_sub_${subMenuId}`).value;
+        axios.get(url)
+        .then((response) => {
+            //location.reload();
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    }
+
+    document.getElementById('changeIcon').addEventListener('click', (e) => {
+        const id = document.getElementById('menuId').value;
+        const iconName = document.getElementById('iconName').value;
+        axios.post(`/configurations/update-icon/${id}`, {
+            icon: iconName
+        })
+        .then(response => {
+            console.log(response);
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    });
+
+</script>

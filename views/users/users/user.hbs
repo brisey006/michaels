@@ -1,0 +1,123 @@
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <!-- Profile -->
+                                <div class="card bg-primary">
+                                    <div class="card-body profile-user-box">
+
+                                        <div class="row">
+                                            <div class="col-sm-8">
+                                                <div class="media">
+                                                    <span class="float-left m-2 mr-4"><img src="{{userData.displayImage}}" style="height: 100px;" alt="" class="rounded-circle img-thumbnail"></span>
+                                                    <div class="media-body">
+                                                        <h4 class="mt-1 mb-1 text-white">{{userData.firstName}} {{userData.lastName}}</h4>
+                                                        <p class="font-13 text-white-50">{{userData.userRole.title}}</p>
+
+                                                        <ul class="mb-0 list-inline text-light">
+                                                            <li class="list-inline-item mr-3">
+                                                                <h5 class="mb-1">{{length userData.departments}}</h5>
+                                                                <p class="mb-0 font-13 text-white-50">Departments</p>
+                                                            </li>
+                                                        </ul>
+                                                    </div> <!-- end media-body-->
+                                                </div>
+                                            </div> <!-- end col-->
+
+                                            <div class="col-sm-4">
+                                                <div class="text-center mt-sm-0 mt-3 text-sm-right">
+                                                    <button type="button" class="btn btn-light">
+                                                        <i class="mdi mdi-account-edit mr-1"></i> Edit Profile
+                                                    </button>
+                                                </div>
+                                            </div> <!-- end col-->
+                                        </div> <!-- end row -->
+
+                                    </div> <!-- end card-body/ profile-user-box-->
+                                </div><!--end profile/ card -->
+                            </div> <!-- end col-->
+                        </div>
+                        <!-- end row -->
+
+
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <!-- Personal-Information -->
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="header-title mt-0 mb-3">User Information</h4>
+                                        <p class="text-muted font-13">{{userData.bio}}</p>
+
+                                        <hr/>
+
+                                        <div class="text-left">
+                                            <p class="text-muted"><strong>Full Name :</strong> <span class="ml-2">{{userData.firstName}} {{userData.lastName}}</span></p>
+
+                                            {{#if userData.phoneNumber}}
+                                                <p class="text-muted"><strong>Mobile :</strong><span class="ml-2">{{userData.phoneNumber}}</span></p>
+                                            {{/if}}
+
+                                            <p class="text-muted"><strong>Email :</strong> <span class="ml-2">{{userData.email}}</span></p>
+
+                                            {{#if userData.address}}
+                                                <p class="text-muted"><strong>Address :</strong><span class="ml-2">{{userData.address}}</span></p>
+                                            {{/if}}
+
+                                            {{#if userData.gender}}
+                                                <p class="text-muted"><strong>Gender :</strong><span class="ml-2">{{userData.gender}}</span></p>
+                                            {{/if}}
+
+                                            {{#if userData.dateOfBirth}}
+                                                <p class="text-muted"><strong>Date of birth :</strong><span class="ml-2">{{userData.dateOfBirth}}</span></p>
+                                            {{/if}}
+
+                                            {{#if userData.country}}
+                                                <p class="text-muted"><strong>Country :</strong><span class="ml-2">{{userData.country}}</span></p>
+                                            {{/if}}
+
+                                            <p class="text-muted mb-0"><strong>Elsewhere :</strong>
+                                                <a class="d-inline-block ml-2 text-muted" title="" data-placement="top" data-toggle="tooltip" href="" data-original-title="Facebook"><i class="mdi mdi-facebook"></i></a>
+                                                <a class="d-inline-block ml-2 text-muted" title="" data-placement="top" data-toggle="tooltip" href="" data-original-title="Twitter"><i class="mdi mdi-twitter"></i></a>
+                                                <a class="d-inline-block ml-2 text-muted" title="" data-placement="top" data-toggle="tooltip" href="" data-original-title="Skype"><i class="mdi mdi-skype"></i></a>
+                                            </p>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Personal-Information -->
+
+                            </div> <!-- end col-->
+
+                            <div class="col-lg-8">
+                                <div class="card">
+                                    <div class="card-body">
+                                        
+                                        <a style="float: right; margin-top: -10px;" class="btn btn-primary" href="{{parseUrl 'add-user-department' urls id=userData._id}}">Add Department</a>
+                                        <h4 class="header-title mb-3">Departments</h4>
+
+                                        <div class="table-responsive">
+                                            <table class="table table-hover table-centered mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Users</th>
+                                                        <th>Records</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {{#each userData.departments}}
+                                                        <tr>
+                                                            <td>{{this.department.title}}</td>
+                                                            <td>{{length this.department.users}}</td>
+                                                            <td>{{length this.department.records}}</td>
+                                                        </tr>
+                                                    {{/each}}
+                                                </tbody>
+                                            </table>
+                                        </div> <!-- end table responsive-->
+                                    </div> <!-- end col-->
+                                </div> <!-- end row-->
+
+                            </div>
+                            <!-- end col -->
+
+                        </div>
+                        <!-- end row -->

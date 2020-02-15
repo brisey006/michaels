@@ -1,0 +1,46 @@
+{{#if urlData}}
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                    {{#if urlData.module}}
+                        {{#eq urlData.module urlData.name}}{{else}}
+                            <li class="breadcrumb-item"><a href="../">{{capitalizeAll urlData.module}}</a></li>
+                        {{/eq}}
+                    {{/if}}
+                    <li class="breadcrumb-item active">{{urlData.title}}</li>
+                </ol>
+            </div>
+            <h4 class="page-title">{{urlData.title}}</h4>
+        </div>
+    </div>
+</div>     
+<!-- end page title --> 
+
+{{else}}
+
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="../">Module</a></li>
+                    <li class="breadcrumb-item active">Page</li>
+                </ol>
+            </div>
+            {{#if pageTitle}}
+            <h4 class="page-title">{{pageTitle}}</h4>
+            {{else}}
+            <h4 class="page-title">Page</h4>
+            {{/if}}
+        </div>
+    </div>
+</div>     
+<!-- end page title --> 
+
+{{/if}}

@@ -1,0 +1,27 @@
+version: '3'
+services: 
+    app:
+        container_name: dashboard
+        restart: always
+        build: .
+        links: 
+            - mongo
+        networks: 
+            yadah:
+                ipv4_address: 172.20.0.2
+    mongo:
+        container_name: mongo
+        image: mongo
+        volumes:
+            - mongo_data:/data/db
+        ports:
+            - '27017'
+        networks: 
+            yadah:
+                ipv4_address: 172.20.0.3
+volumes:
+    mongo_data:
+        external: true
+networks: 
+    yadah:
+        external: true

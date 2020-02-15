@@ -1,0 +1,102 @@
+<div class="row mb-2">
+    <div class="col-sm-4">
+        <a href="{{url 'add-menu'}}" class="btn btn-success mb-3"><i class="mdi mdi-plus"></i> Create Menu</a>
+    </div>
+    <div class="col-sm-8">
+        <div class="text-sm-right">
+            <div class="btn-group mb-3">
+                <button type="button" class="btn btn-primary">All</button>
+            </div>
+            <div class="btn-group mb-3 ml-1">
+                <button type="button" class="btn btn-light">Activated</button>
+                <button type="button" class="btn btn-light">Deactivated</button>
+            </div>
+        </div>
+    </div><!-- end col-->
+</div> 
+<!-- end row-->
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+
+                <div class="table-responsive">
+                    <table class="table table-centered w-100 dt-responsive nowrap">
+                        <thead class="thead-light">
+                            <tr>
+                                <th class="all" style="width: 20px;">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="customCheck1">
+                                        <label class="custom-control-label" for="customCheck1">&nbsp;</label>
+                                    </div>
+                                </th>
+                                <th class="all">Title</th>
+                                <th>Added Date</th>
+                                <th>Status</th>
+                                <th>Sub-Menus</th>
+                                <th style="width: 85px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each menus as |value key|}}
+                            <tr>
+                                <td>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="customCheck2">
+                                        <label class="custom-control-label" for="customCheck2">&nbsp;</label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="m-0 d-inline-block align-middle font-16">
+                                        <a href="{{url 'menu-details' id=this._id}}" class="text-body">{{value.title}}</a>
+                                    </p>
+                                </td>
+                                <td>
+                                    09/12/2018
+                                </td>
+                                <td>
+                                    {{#if this.isActive}}
+                                        <span id="status{{this._id}}" class="badge badge-success">Active</span>
+                                    {{else}}
+                                        <span id="status{{this._id}}" class="badge badge-danger">Deactivated</span>
+                                    {{/if}}
+                                </td>
+                                <td>
+                                    {{length value.subMenus}}
+                                </td>
+
+                                <td class="table-action">
+                                    <a href="{{url 'menu-details' id=this._id}}" class="action-icon"> <i class="mdi mdi-pencil"></i></a>
+                                    <a href="javascript: void(0);" class="action-icon" data-toggle="modal" data-target="#modal{{value._id}}"> <i class="mdi mdi-delete"></i></a>
+                                </td>
+                            </tr>
+
+                            <!-- Standard modal content -->
+                            <div id="modal{{value._id}}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="standard-modalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title" id="modalLabel{{value._id}}">Delete {{value.title}}</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Are you sure you want to delete {{value.title}}?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                                            <a href="{{url 'delete-menu' id=value._id}}" class="btn btn-danger">Yes</a>
+                                        </div>
+                                    </div><!-- /.modal-content -->
+                                </div><!-- /.modal-dialog -->
+                            </div><!-- /.modal -->
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+</div>
+<!-- end row -->
+

@@ -1,0 +1,26 @@
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="header-title mb-3">Add department for {{userData.firstName}} {{userData.lastName}}</h4>
+                                        <form method="post">
+                                            <div class="row">
+                                                <div class="col-xl-6">
+                                                    <div class="form-group mb-3">
+                                                        <label for="department">Department</label>
+                                                        <select class="form-control" id="department" name="department">
+                                                            {{#each departments}}
+                                                                <option value="{{this.slug}}" >{{this.title}}</option>
+                                                            {{/each}}
+                                                        </select>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                                </div> <!-- end col-->
+                                            </div>
+                                            <!-- end row -->
+                                        </form>
+                                    </div> <!-- end card-body -->
+                                </div> <!-- end card-->
+                            </div> <!-- end col-->
+                        </div>
+                        <!-- end row-->
