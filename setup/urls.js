@@ -9,8 +9,16 @@ module.exports = [
         url: '/users/set-picture/:id'
     },
     {
+        name: 'crop-picture',
+        url: '/users/crop-picture/:id'
+    },
+    {
         name: 'logout',
         url: '/users/logout'
+    },
+    {
+        name: 'login',
+        url: '/users/login'
     },
     {
         name: 'users',
@@ -23,6 +31,10 @@ module.exports = [
     {
         name: 'edit-user',
         url: '/users/edit/:id'
+    },
+    {
+        name: 'users-profile',
+        url: '/users/profile/e/:id'
     },
 
     /** USER PROFILE */

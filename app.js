@@ -5,6 +5,7 @@ const handlebars = require('express-handlebars');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const fileUpload = require('express-fileupload');
 const passport = require('passport');
 const session = require('express-session');
 const helpers = require('handlebars-helpers')();
@@ -17,7 +18,7 @@ const app = express();
 
 const port = process.env.PORT || 5000;
 
-
+app.use(fileUpload());
 const hbs = handlebars.create({
     extname: '.hbs',
     helpers: {

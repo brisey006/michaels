@@ -31,7 +31,10 @@ module.exports = {
             return '#';
         }
     },
+    formatDateAndTime: (d) => {
+        return moment(d).format("MMMM Do YYYY @ HH:mm");
+    },
     formatDate: (d) => {
-        return moment(d).format("MMMM Do YYYY, HH:mm");
+        return moment(d).format("MMMM Do YYYY");
     }
 }

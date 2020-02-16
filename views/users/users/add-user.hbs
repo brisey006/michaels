@@ -1,5 +1,5 @@
 <div class="row justify-content-center">
-    <div class="col-12 col-lg-8 col-xl-4">
+    <div class="col-12 col-lg-8 col-xl-6">
         <div class="card">
             <div class="card-body">
                 <h2>Add User</h2>
@@ -41,10 +41,21 @@
                                 <ul class="parsley-errors-list filled"><li class="parsley-required">{{phoneNumberError}}</li></ul>
                                 {{/if}}
                             </div>
-                            <input type="hidden" name="userType" value="Administrator">
+                            <div class="form-group mb-3">
+                                <label for="gender">User Type</label>
+                                <select class="form-control {{#if userTypeError}}parsley-error{{/if}}" data-toggle="select2" id="userType" name="userType" style="width: 100%;">
+                                    <option value="">Select User Type</option>
+                                    <option {{#eq formData.userType 'Administrator'}}selected{{/eq}}>Administrator</option>
+                                    <option {{#eq formData.userType 'Publisher'}}selected{{/eq}}>Publisher</option>
+                                    <option {{#eq formData.userType 'Librarian'}}selected{{/eq}}>Librarian</option>
+                                </select>
+                                {{#if userTypeError}}
+                                <ul class="parsley-errors-list filled"><li class="parsley-required">{{userTypeError}}</li></ul>
+                                {{/if}}
+                            </div>
                             <div class="form-group mb-3">
                                 <label for="gender">Gender</label>
-                                <select class="form-control {{#if countryError}}parsley-error{{/if}}" data-toggle="select2" id="gender" name="gender" style="width: 100%;">
+                                <select class="form-control {{#if genderError}}parsley-error{{/if}}" data-toggle="select2" id="gender" name="gender" style="width: 100%;">
                                     <option value="">Select Gender</option>
                                     <option {{#eq formData.gender 'Male'}}selected{{/eq}}>Male</option>
                                     <option {{#eq formData.gender 'Female'}}selected{{/eq}}>Female</option>
@@ -72,11 +83,7 @@
                                 <ul class="parsley-errors-list filled"><li class="parsley-required">{{countryError}}</li></ul>
                                 {{/if}}
                             </div>
-
-                            <h4>User Picture</h4>
-                            <input type="file" class="dropify" data-height="150" />
-                            <br>
-
+                            
                             <button type="submit" class="btn btn-primary">Save</button>
                         </div> <!-- end col-->
                     </div>

@@ -1,1 +1,27 @@
-<h1>Set picture</h1>
+                        <div class="row justify-content-center">
+                            <div class="col-12 col-lg-8 col-xl-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        {{#if setup}}
+                                            <h3>Set display image for {{userData.firstName}}.</h3>
+                                        {{else}}
+                                            <h3>Update {{userData.firstName}}'s display image.</h3>
+                                        {{/if}}
+            
+                                        <form method="post" enctype="multipart/form-data">
+                                            <input type="file" name="file" class="dropify" data-height="300" />
+
+                                            <div class="clearfix text-right mt-3">
+                                                {{#if setup}}
+                                                <button type="submit" class="btn btn-danger"> <i class="mdi mdi-upload mr-1"></i> Upload</button>
+                                                <a class="btn btn-primary" href="{{parseUrl 'users-profile' urls id=userData._id}}"> <i class="mdi mdi-forward mr-1"></i> Skip</a>
+                                                {{else}}
+                                                <button type="submit" class="btn btn-danger"> <i class="mdi mdi-upload mr-1"></i> Update</button>
+                                                {{/if}}
+                                            </div>
+                                        </form>
+                                    </div> <!-- end card-body-->
+                                </div> <!-- end card-->
+                            </div><!-- end col -->
+                        </div>
+                        <!-- end row -->  

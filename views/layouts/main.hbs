@@ -214,22 +214,11 @@
                             <i class="mdi mdi-chevron-down"></i> 
                         </a>
                         <div class="dropdown-menu">
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">
-                                <i class="fe-briefcase mr-1"></i>
-                                <span>New Projects</span>
-                            </a>
 
                             <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">
+                            <a href="{{parseUrl 'add-user' urls}}" class="dropdown-item">
                                 <i class="fe-user mr-1"></i>
-                                <span>Create Users</span>
-                            </a>
-
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">
-                                <i class="fe-bar-chart-line- mr-1"></i>
-                                <span>Revenue Report</span>
+                                <span>User</span>
                             </a>
 
                             <!-- item-->
@@ -330,8 +319,8 @@
                 <!-- User box -->
                 <div class="user-box">
                     <div class="user-img">
-                        <img src="/assets/images/users/user-1.jpg" alt="user-img" title="Mat Helme" class="rounded-circle img-fluid">
-                        <a href="javascript:void(0);" class="user-edit"><i class="mdi mdi-pencil"></i></a>
+                        <img src="{{user.photoUrl}}" alt="user-img" title="Mat Helme" class="rounded-circle img-fluid">
+                        <a href="{{parseUrl 'set-picture' urls id=user._id}}" class="user-edit"><i class="mdi mdi-pencil"></i></a>
                     </div>
             
                     <h5><a href="javascript: void(0);">{{user.firstName}} {{user.lastName}}</a> </h5>
@@ -351,18 +340,6 @@
                         </label>
                     </div>
                     <div class="checkbox checkbox-primary mb-2">
-                        <input id="Rcheckbox2" type="checkbox" checked>
-                        <label for="Rcheckbox2">
-                            API Access
-                        </label>
-                    </div>
-                    <div class="checkbox checkbox-primary mb-2">
-                        <input id="Rcheckbox3" type="checkbox">
-                        <label for="Rcheckbox3">
-                            Auto Updates
-                        </label>
-                    </div>
-                    <div class="checkbox checkbox-primary mb-2">
                         <input id="Rcheckbox4" type="checkbox" checked>
                         <label for="Rcheckbox4">
                             Online Status
@@ -375,41 +352,6 @@
                         </label>
                     </div>
                 </div>
-
-                <!-- Timeline -->
-                <hr class="mt-0" />
-                <h5 class="px-3">Messages <span class="float-right badge badge-pill badge-danger">25</span></h5>
-                <hr class="mb-0" />
-                <div class="p-3">
-                    <div class="inbox-widget">
-                        <div class="inbox-item">
-                            <div class="inbox-item-img"><img src="/assets/images/users/user-2.jpg" class="rounded-circle" alt=""></div>
-                            <p class="inbox-item-author"><a href="javascript: void(0);" class="text-dark">Tomaslau</a></p>
-                            <p class="inbox-item-text">I've finished it! See you so...</p>
-                        </div>
-                        <div class="inbox-item">
-                            <div class="inbox-item-img"><img src="/assets/images/users/user-3.jpg" class="rounded-circle" alt=""></div>
-                            <p class="inbox-item-author"><a href="javascript: void(0);" class="text-dark">Stillnotdavid</a></p>
-                            <p class="inbox-item-text">This theme is awesome!</p>
-                        </div>
-                        <div class="inbox-item">
-                            <div class="inbox-item-img"><img src="/assets/images/users/user-4.jpg" class="rounded-circle" alt=""></div>
-                            <p class="inbox-item-author"><a href="javascript: void(0);" class="text-dark">Kurafire</a></p>
-                            <p class="inbox-item-text">Nice to meet you</p>
-                        </div>
-
-                        <div class="inbox-item">
-                            <div class="inbox-item-img"><img src="/assets/images/users/user-5.jpg" class="rounded-circle" alt=""></div>
-                            <p class="inbox-item-author"><a href="javascript: void(0);" class="text-dark">Shahedk</a></p>
-                            <p class="inbox-item-text">Hey! there I'm available...</p>
-                        </div>
-                        <div class="inbox-item">
-                            <div class="inbox-item-img"><img src="/assets/images/users/user-6.jpg" class="rounded-circle" alt=""></div>
-                            <p class="inbox-item-author"><a href="javascript: void(0);" class="text-dark">Adhamdannaway</a></p>
-                            <p class="inbox-item-text">This theme is awesome!</p>
-                        </div>
-                    </div> <!-- end inbox-widget -->
-                </div> <!-- end .p-3-->
 
             </div> <!-- end slimscroll-menu-->
         </div>

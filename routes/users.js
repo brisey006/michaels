@@ -5,7 +5,11 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 const getUrl = require('../config/getUrl');
 const enc = require('../config/enc');
+const slugify = require('../functions/index').slugify;
 const randomString = require('random-string');
+const path = require('path');
+const fs = require('fs');
+const sharp = require('sharp');
 
 const addPageCss = [
     "/assets/libs/jquery-nice-select/nice-select.css",
@@ -52,7 +56,7 @@ router.get('/users/register', (req, res) => {
 
 router.get('/users/logout', (req, res) => {
     req.session.destroy(() => {
-        res.clearCookie('token').redirect('/users/login');
+        res.clearCookie('token').render('logout', { layout: false });
     });
 });
 
@@ -84,7 +88,8 @@ router.get('/users/list/:userType/:page/:limit', (req, res) => {
             js: [
                 "/assets/libs/sweetalert2/sweetalert2.min.js",
                 "/assets/js/axios.min.js",
-                '/assets/js/users.js'
+                "/assets/js/users.js",
+                "/assets/js/pagination.js"
             ]
         });
     }).catch(e => {
@@ -110,7 +115,45 @@ router.get('/users/delete/:id',async (req, res) => {
 });
 
 router.get('/users/set-picture/:id', (req, res) => {
-    res.render('users/users/set-picture');
+    const setup = req.query.setup;
+    User.findOne({ _id: req.params.id })
+    .then(userData => {
+        res.render('users/users/set-picture', {
+            setup,
+            userData,
+            css: [
+                "/assets/libs/dropify/dropify.min.css"
+            ],
+            js: [
+                "/assets/libs/dropify/dropify.min.js",
+                "/assets/js/pages/form-fileuploads.init.js"
+            ]
+        });
+    })
+    .catch(err => {
+        console.log(err);
+    });
+});
+
+router.get('/users/crop-picture/:id', (req, res) => {
+    User.findOne({ _id: req.params.id })
+    .then(user => {
+        res.render('users/users/crop-picture', {
+            userDetails: user,
+            css: [
+                "/assets/css/croppr.css"
+            ],
+            js: [
+                "/assets/js/axios.min.js",
+                "/assets/js/croppr.min.js",
+                "/assets/js/image.blob.js",
+                "/assets/js/user.image.cropper.js"
+            ]
+        });
+    })
+    .catch(err => {
+        res.json(err);
+    });
 });
 
 router.get('/users/edit/:id', async (req, res) => {
@@ -133,11 +176,22 @@ router.get('/users/u/:id', (req, res) => {
     const rtype = req.query.rtype;
 });
 
+router.get('/users/profile/e/:id', (req, res) => {
+    const id = req.params.id;
+    User.findOne({ _id: id })
+    .then(userData => {
+        res.render('users/users/user', { userData });
+    })
+    .catch(err => {
+        res.send(err);
+    });
+});
+
 /** Post Requests */
 
 router.post('/users/add', async (req, res) => {
     const { firstName, lastName, email, physicalAddress, phoneNumber, gender, userType, dateOfBirth, country } = req.body;
-    let firstNameError, lastNameError, emailError, physicalAddressError, phoneNumberError, genderError, dateOfBirthError, countryError;
+    let firstNameError, lastNameError, emailError, physicalAddressError, phoneNumberError, genderError, userTypeError, dateOfBirthError, countryError;
 
     const currentUser = req.session.user._id;
 
@@ -170,6 +224,10 @@ router.post('/users/add', async (req, res) => {
         genderError = 'Please choose user\'s gender'
     }
 
+    if (!userType) {
+        userTypeError = 'Please select user\'s type'
+    }
+
     if (!dateOfBirth) {
         dateOfBirthError = 'Please provide user\'s date of birth';
     }
@@ -178,7 +236,7 @@ router.post('/users/add', async (req, res) => {
         countryError = 'Please provide user\'s country';
     }
 
-    if (!firstNameError && !lastNameError && !emailError && !phoneNumberError && !dateOfBirthError && !countryError) {
+    if (!firstNameError && !lastNameError && !emailError && !genderError && !userTypeError && !phoneNumberError && !dateOfBirthError && !countryError) {
         const fullName = `${firstName} ${lastName}`;
         const password = randomString({ special: true, length: 8 });
         const hashId = enc.encrypt(password);
@@ -206,7 +264,8 @@ router.post('/users/add', async (req, res) => {
             user.save().then(user => {
                 userAction(currentUser, 'create', 'User', null, user._id)
                 .then(() => {
-                    res.json(user);
+                    const url = getUrl('set-picture', { id: user._id }, req.app.locals.urls);
+                    res.redirect(`${url}?setup=true`);
                 })
                 .catch(err => {
                     res.json(err);
@@ -222,78 +281,94 @@ router.post('/users/add', async (req, res) => {
             js: addPageJs,
             formData: req.body,
             countries,
-            firstNameError, lastNameError, emailError, physicalAddressError, phoneNumberError, genderError, dateOfBirthError, countryError
+            firstNameError, lastNameError, emailError, physicalAddressError, phoneNumberError, genderError, userTypeError, dateOfBirthError, countryError
         });
     }
 });
 
-router.post('/users/change-password', (req, res) => {
-    const userSession = req.session.user;
-    const { currentPassword, newPassword, confirmPassword } = req.body;
-    if(!currentPassword || !newPassword || !confirmPassword) {
-        res.json({
-            status: 'err',
-            message: 'Fill in all fields'
-        });
-    } else {
-        if(newPassword.length < 6) {
-            res.json({
-                status: 'err',
-                message: 'Passwords must be 6 or more characters'
-            });
-        } else {
-            if(newPassword !== confirmPassword) {
-                res.json({
-                    status: 'err',
-                    message: 'Passwords do not match'
-                });
-            } else {
-                /*db.collection('users').findOne({ _id: ObjectId(userSession._id) })
-                .then(user => {
-                    bcrypt.compare(currentPassword, user.password, (err, isMatch) => {
-                        if (err) {
-                            console.log(err);
-                        }
+router.post('/users/set-picture/:id', async (req, res) => {
     
-                        if (isMatch) {
-                            bcrypt.genSalt(10, (err, salt) => bcrypt.hash(newPassword, salt, (err, hash) => {
-                                if (err) throw err;
-                                db.collection('users').updateOne({ email: user.email }, { 
-                                    $set: { 
-                                        password: hash, 
-                                        linkHash: enc.encrypt(newPassword)
-                                    } 
-                                })
-                                .then(data => {
-                                    if (data.result.nModified == 1) {
-                                        res.json({
-                                            status: 'success',
-                                            message: 'Your password has been changed'
-                                        });
-                                    } else {
-                                        res.json({
-                                            status: 'err',
-                                            message: 'An error occured. Try again later'
-                                        });
-                                    }
-                                })
-                                .catch(err => {
-                                    res.json({ status: 'err', message: err.errmsg });
-                                });
-                            }));
-                        } else {
-                            res.json({
-                                status: 'err',
-                                message: 'Enter correct current password'
-                            });
-                        }
-                    });
-                }).catch(err => {
-                    throw err;
-                });*/
-            }
-        }
+    if (Object.keys(req.files).length == 0) {
+      return res.status(400).send('No files were uploaded.');
     }
+
+    const user = await User.findOne({ _id: req.params.id });
+
+    let file = req.files.file;
+    let fileName = req.files.file.name;
+    let ext = path.extname(fileName);
+
+    let dateTime = new Date(user.createdAt);
+
+    const fileN = `${slugify(user.fullName+" "+dateTime.getTime().toString())}${ext}`;
+
+    let finalFile = `/uploads/users/temp/${fileN}`;
+
+    let pathstr = __dirname;
+    pathstr = pathstr.substr(0, pathstr.indexOf('/routes'));
+    
+    file.mv(`${path.join(pathstr, 'public')}${finalFile}`, async (err) => {
+      if (err){
+          res.send(err.message);
+      } else {
+        user.tempPhotoUrl = finalFile;
+        await user.save();
+        const url = getUrl('crop-picture', { id: user._id }, req.app.locals.urls);
+        res.redirect(url);
+      }
+    });
+});
+
+router.post('/users/crop-picture/:id', async (req, res) => {
+    
+    if (Object.keys(req.files).length == 0) {
+      return res.status(400).send('No files were uploaded.');
+    }
+
+    const user = await User.findOne({ _id: req.params.id });
+    let dateTime = new Date(user.createdAt);
+
+    let file = req.files.file;
+    let ext = '.jpeg';
+    const fileN = `${slugify(user.fullName+" "+dateTime.getTime().toString())}${ext}`;
+    let finalFile = `/uploads/users/thumbs/${fileN}`;
+
+    let pathstr = __dirname;
+    pathstr = pathstr.substr(0, pathstr.indexOf('/routes'));
+
+    file.mv(`${path.join(pathstr, 'public')}${finalFile}`, async (err) => {
+      if (err){
+          res.send(err.message);
+      } else {
+        const image = sharp(`${path.join(pathstr, 'public')}${finalFile}`);
+        image
+            .metadata()
+            .then(function(metadata) {
+            return image
+            .resize({
+                width: 300,
+                height: 300,
+                fit: sharp.fit.cover,
+                position: sharp.strategy.entropy
+                })
+                .webp()
+                .toBuffer();
+            })
+            .then(data => {
+                fs.writeFile(`${path.join(pathstr, 'public')}${finalFile}`, data, async (err) => {
+                    if(err) {
+                        return console.log(err);
+                    }
+                    user.photoUrl = finalFile;
+                    await user.save();
+                    res.send(user);
+                });
+            }).catch(err => {
+                console.log(err);
+                res.json({err: err});
+            });
+        }
+    });
 });
 
 router.post('/users/edit/:id', async (req, res) => {

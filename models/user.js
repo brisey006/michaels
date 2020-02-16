@@ -32,6 +32,7 @@ const UserSchema = new mongoose.Schema({
         type: String,
         default: '/assets/images/users/avatar_placeholder.png'
     },
+    tempPhotoUrl: String,
     gender: String,
     userType: String,
     hashId: String,

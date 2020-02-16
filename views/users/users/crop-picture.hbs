@@ -1,0 +1,17 @@
+                        <div class="row justify-content-center">
+                            <div class="col-12 col-lg-8 col-xl-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h3>Crop user picture</h3>
+                                        <img class="card-img-top" src="{{userDetails.tempPhotoUrl}}" id="croppr" alt="{{userDetails.fullName}}">
+                                        <img class="card-img-top" style="display: none" src="{{userDetails.tempPhotoUrl}}" id="imgr" alt="{{userDetails.fullName}}">
+                                        <canvas id="myCanvas" style="display: none"></canvas>
+                                        <div class="clearfix text-right mt-3">
+                                            <button id="save" class="btn btn-danger"> <i class="mdi mdi-content-save mr-1"></i> Save</button>
+                                        </div>
+                                    </div> <!-- end card-body-->
+                                </div> <!-- end card-->
+                            </div><!-- end col -->
+                        </div>
+                        <input type="hidden" id="profileUrl" value="{{parseUrl 'users-profile' urls id=userDetails._id}}">
+                        <!-- end row -->  

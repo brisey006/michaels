@@ -34,7 +34,18 @@
                                 <ul class="parsley-errors-list filled"><li class="parsley-required">{{phoneNumberError}}</li></ul>
                                 {{/if}}
                             </div>
-                            <input type="hidden" name="userType" value="Administrator">
+                            <div class="form-group mb-3">
+                                <label for="gender">User Type</label>
+                                <select class="form-control {{#if userTypeError}}parsley-error{{/if}}" data-toggle="select2" id="userType" name="userType" style="width: 100%;">
+                                    <option value="">Select User Type</option>
+                                    <option {{#eq userDetails.userType 'Administrator'}}selected{{/eq}}>Administrator</option>
+                                    <option {{#eq userDetails.userType 'Publisher'}}selected{{/eq}}>Publisher</option>
+                                    <option {{#eq userDetails.userType 'Librarian'}}selected{{/eq}}>Librarian</option>
+                                </select>
+                                {{#if userTypeError}}
+                                <ul class="parsley-errors-list filled"><li class="parsley-required">{{userTypeError}}</li></ul>
+                                {{/if}}
+                            </div>
                             <div class="form-group mb-3">
                                 <label for="gender">Gender</label>
                                 <select class="form-control {{#if countryError}}parsley-error{{/if}}" data-toggle="select2" id="gender" name="gender">

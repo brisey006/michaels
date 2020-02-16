@@ -16,7 +16,7 @@
                                                     <a href="{{parseUrl 'add-user' urls}}">
                                                         <button type="button" class="btn btn-danger waves-effect waves-light mb-2 mr-2"><i class="mdi mdi-account mr-1"></i> Add User</button>
                                                     </a>
-                                                    <button type="button" class="btn btn-success waves-effect waves-light mb-2 mr-1"><i class="mdi mdi-settings"></i></button>
+                                                    <button type="button" class="btn btn-success waves-effect waves-light mb-2 mr-1"><i class="mdi mdi-filter"></i></button>
                                                 </div>
                                             </div><!-- end col-->
                                         </div>
@@ -52,7 +52,7 @@
                                                         </td>
                                                         <td class="table-user" nowrap>
                                                             <img src="{{this.photoUrl}}" alt="table-user" class="mr-2 rounded-circle">
-                                                            <a href="{{parseUrl 'set-picture' @root.urls id=this._id}}" class="text-body font-weight-semibold">{{this.fullName}}</a>
+                                                            <a href="{{parseUrl 'users-profile' @root.urls id=this._id}}" class="text-body font-weight-semibold">{{this.fullName}}</a>
                                                         </td>
                                                         <td>
                                                             {{this.email}}
@@ -67,10 +67,10 @@
                                                             {{this.country}}
                                                         </td>
                                                         <td nowrap>
-                                                            {{formatDate this.createdAt}}
+                                                            {{formatDateAndTime this.createdAt}}
                                                         </td>
                                                         <td nowrap>
-                                                            {{formatDate this.updatedAt}}
+                                                            {{formatDateAndTime this.updatedAt}}
                                                         </td>
                                                         <td nowrap>
                                                             <a href="{{parseUrl 'edit-user' @root.urls id=this._id}}" class="action-icon"> <i class="mdi mdi-square-edit-outline"></i></a>
@@ -82,25 +82,9 @@
                                             </table>
                                         </div>
 
-                                        <ul class="pagination pagination-rounded justify-content-end my-2">
-                                            <li class="page-item">
-                                                <a class="page-link" href="javascript: void(0);" aria-label="Previous">
-                                                    <span aria-hidden="true">«</span>
-                                                    <span class="sr-only">Previous</span>
-                                                </a>
-                                            </li>
-                                            <li class="page-item active"><a class="page-link" href="javascript: void(0);">1</a></li>
-                                            <li class="page-item"><a class="page-link" href="javascript: void(0);">2</a></li>
-                                            <li class="page-item"><a class="page-link" href="javascript: void(0);">3</a></li>
-                                            <li class="page-item"><a class="page-link" href="javascript: void(0);">4</a></li>
-                                            <li class="page-item"><a class="page-link" href="javascript: void(0);">5</a></li>
-                                            <li class="page-item">
-                                                <a class="page-link" href="javascript: void(0);" aria-label="Next">
-                                                    <span aria-hidden="true">»</span>
-                                                    <span class="sr-only">Next</span>
-                                                </a>
-                                            </li>
-                                        </ul>
+                                        <input type="hidden" id="paginationData" value='{ "totalDocs": {{users.totalDocs}}, "limit": {{users.limit}}, "totalPages": {{users.totalPages}}, "page": {{users.page}}, "pagingCounter": {{users.pagingCounter}}, "hasPrevPage": {{users.hasPrevPage}}, "hasNextPage": {{users.hasNextPage}}, "prevPage": {{#if users.prevPage}}{{users.prevPage}}{{else}}null{{/if}}, "nextPage": {{#if users.nextPage}}{{users.nextPage}}{{else}}null{{/if}} }'>
+                                        <input type="hidden" value="{{parseUrl 'users' urls userType='all' page='toBeReplaced' limit=users.limit}}" id="paginateUrl">
+                                        <ul id="paginate" class="pagination pagination-rounded justify-content-end my-2"></ul>
                                     </div> <!-- end card-body-->
                                 </div> <!-- end card-->
                             </div> <!-- end col -->
