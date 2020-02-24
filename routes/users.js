@@ -375,7 +375,8 @@ router.post('/users/edit/:id', async (req, res) => {
     const id = req.params.id;
     const currentUser = req.session.user._id;
     const before = await User.findOne({_id: id});
-    await User.updateOne({ _id: id }, { $set: req.body });
+    const data = { ...req.body, fullName: `${req.body.firstName} ${req.body.lastName}` };
+    await User.updateOne({ _id: id }, { $set: data });
     const after = await User.findOne({_id: id});
     await userAction(currentUser, 'update', 'User', before, after);
     const url = getUrl('users', { page: 1, limit: 20, userType: 'all' }, req.app.locals.urls);

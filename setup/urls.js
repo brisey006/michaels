@@ -41,5 +41,15 @@ module.exports = [
     {
         name: 'user-profile',
         url: '/profile/me'
-    }
+    },
+
+    /** UNIVERSITIES */
+    {
+        name: "add-university",
+        url: '/universities/add'
+    },
+    {
+        name: 'set-university-logo',
+        url: '/university/set-picture/:id'
+    },
 ];

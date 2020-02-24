@@ -1,0 +1,63 @@
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h2>Add University</h2>
+                <form method="POST" novalidate> 
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="form-group">
+                                <label for="menuicon">Name</label>
+                                <input type="text" id="name" name="name" {{#if formData}} value="{{formData.name}}"{{/if}} class="form-control {{#if nameError}}parsley-error{{/if}}" placeholder="University Name">
+                                {{#if nameError}}
+                                <ul class="parsley-errors-list filled"><li class="parsley-required">{{nameError}}</li></ul>
+                                {{/if}}
+                            </div>
+                            <div class="form-group">
+                                <label for="menuicon">Contact Email</label>
+                                <input type="text" id="email" name="email" {{#if formData}} value="{{formData.email}}"{{/if}} class="form-control {{#if emailError}}parsley-error{{/if}}" placeholder="Email Address">
+                                {{#if emailError}}
+                                <ul class="parsley-errors-list filled"><li class="parsley-required">{{emailError}}</li></ul>
+                                {{/if}}
+                            </div>
+                            <div class="form-group">
+                                <label for="physicalAddress">Physical Address</label>
+                                <textarea name="physicalAddress" class="form-control {{#if emailError}}parsley-error{{/if}}" id="physicalAddress" rows="3">{{#if formData}}{{formData.physicalAddress}}{{/if}}</textarea>
+                                {{#if physicalAddressError}}
+                                <ul class="parsley-errors-list filled"><li class="parsley-required">{{physicalAddressError}}</li></ul>
+                                {{/if}}
+                            </div>
+                            <div class="form-group">
+                                <label for="menuicon">Phone Number <em style="color: #a8a8a8">(Include country code)</em></label>
+                                <input type="text" id="phoneNumber" name="phoneNumber" {{#if formData}} value="{{formData.phoneNumber}}"{{/if}} class="form-control {{#if phoneNumberError}}parsley-error{{/if}}" placeholder="Phone Number">
+                                {{#if phoneNumberError}}
+                                <ul class="parsley-errors-list filled"><li class="parsley-required">{{phoneNumberError}}</li></ul>
+                                {{/if}}
+                            </div>
+                            <div class="form-group">
+                                <label for="menuicon">Website <em style="color: #a8a8a8">(Optional)</em></label>
+                                <input type="text" id="website" name="website" {{#if formData}} value="{{formData.website}}"{{/if}} class="form-control" placeholder="Website">
+                            </div>
+                            <div class="form-group">
+                                <label for="country">Country</label>
+                                <select class="form-control {{#if countryError}}parsley-error{{/if}}" data-toggle="select2" name="country" style="width: 100%;">
+                                    <option value="">Select Country</option>
+                                    {{#each countries}}
+                                    <option {{#eq @root.formData.country this.name}}selected{{/eq}}>{{this.name}}</option>
+                                    {{/each}}
+                                </select>
+                                {{#if countryError}}
+                                <ul class="parsley-errors-list filled"><li class="parsley-required">{{countryError}}</li></ul>
+                                {{/if}}
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div> <!-- end col-->
+                    </div>
+                    <!-- end row -->
+                </form>
+            </div> <!-- end card-body -->
+        </div> <!-- end card-->
+    </div> <!-- end col-->
+</div>
+<!-- end row-->

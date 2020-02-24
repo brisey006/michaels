@@ -4,5 +4,6 @@ const router = express.Router();
 router.use('/', require('./dashboard'));
 router.use('/', require('./users'));
 router.use('/', require('./profile'));
+router.use('/', require('./universities'));
 
 module.exports = router;

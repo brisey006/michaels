@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const User = require('../models/user');
 
 const _selfAuth = (req, res, next) => {
-  if (req.url == '/users/login' || req.url == '/users/register' || req.url.indexOf('setup') > -1) {
+  if (req.url == '/users/login' || req.url == '/users/register' || req.url.indexOf('/setup') > -1) {
     next();
   } else {
     if (req.session.user == undefined) {
