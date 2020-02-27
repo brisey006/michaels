@@ -42,6 +42,7 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
+    university: { type: mongoose.Schema.Types.ObjectId, ref: 'University' },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, {
     timestamps: true

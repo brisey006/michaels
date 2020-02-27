@@ -50,6 +50,30 @@ module.exports = [
     },
     {
         name: 'set-university-logo',
-        url: '/university/set-picture/:id'
+        url: '/universities/set-picture/:id'
     },
+    {
+        name: 'crop-university-logo',
+        url: '/universities/crop-picture/:id'
+    },
+    {
+        name: 'universities',
+        url: '/universities/list/:page/:limit'
+    },
+    {
+        name: 'university',
+        url: '/universities/e/:id'
+    },
+    {
+        name: 'add-librarian-search',
+        url: '/universities/librarian/search'
+    },
+    {
+        name: 'add-librarian',
+        url: '/universities/:id/add-librarian/:user'
+    },
+    {
+        name: 'remove-librarian',
+        url: '/universities/:id/remove-librarian/:user'
+    }
 ];

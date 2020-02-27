@@ -22,7 +22,7 @@ const UniversitySchema = new mongoose.Schema({
     website: String,
     logoUrl: {
         type: String,
-        default: '/assets/images/Universitys/avatar_placeholder.png'
+        default: '/assets/images/universities/logo_placeholder.png'
     },
     tempLogoUrl: String,
     librarian: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

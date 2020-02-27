@@ -39,7 +39,6 @@
                                 <select class="form-control {{#if userTypeError}}parsley-error{{/if}}" data-toggle="select2" id="userType" name="userType" style="width: 100%;">
                                     <option value="">Select User Type</option>
                                     <option {{#eq userDetails.userType 'Administrator'}}selected{{/eq}}>Administrator</option>
-                                    <option {{#eq userDetails.userType 'Publisher'}}selected{{/eq}}>Publisher</option>
                                     <option {{#eq userDetails.userType 'Librarian'}}selected{{/eq}}>Librarian</option>
                                 </select>
                                 {{#if userTypeError}}

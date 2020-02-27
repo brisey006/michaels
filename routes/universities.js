@@ -9,6 +9,7 @@ const fs = require('fs');
 const sharp = require('sharp');
 
 const University = require('../models/university');
+const User = require('../models/user');
 const userAction = require('../functions/index').userAction;
 
 const addPageCss = [
@@ -50,6 +51,120 @@ router.get('/universities/add', (req, res) => {
     });
 });
 
+router.get('/universities/set-picture/:id', (req, res) => {
+    const setup = req.query.setup;
+    University.findOne({ _id: req.params.id })
+    .then(universityData => {
+        res.render('universities/set-picture', {
+            setup,
+            universityData,
+            css: [
+                "/assets/libs/dropify/dropify.min.css"
+            ],
+            js: [
+                "/assets/libs/dropify/dropify.min.js",
+                "/assets/js/pages/form-fileuploads.init.js"
+            ]
+        });
+    })
+    .catch(err => {
+        console.log(err);
+    });
+});
+
+router.get('/universities/crop-picture/:id', (req, res) => {
+    University.findOne({ _id: req.params.id })
+    .then(university => {
+        res.render('universities/crop-picture', {
+            universityData: university,
+            css: [
+                "/assets/css/croppr.css"
+            ],
+            js: [
+                "/assets/js/axios.min.js",
+                "/assets/js/croppr.min.js",
+                "/assets/js/image.blob.js",
+                "/assets/js/user.image.cropper.js"
+            ]
+        });
+    })
+    .catch(err => {
+        res.json(err);
+    });
+});
+
+router.get('/universities/list/:page/:limit', (req, res) => {
+    const page = req.params.page;
+    const limit = req.params.limit;
+    University.paginate({}, {
+        page,
+        limit,
+        populate: 'librarian'
+    }).then(universities => {
+        res.render('universities/universities', { 
+            universities,
+            css: [
+                "/assets/libs/sweetalert2/sweetalert2.min.css"
+            ],
+            js: [
+                "/assets/libs/sweetalert2/sweetalert2.min.js",
+                "/assets/js/axios.min.js",
+                "/assets/js/users.js",
+                "/assets/js/pagination.js"
+            ]
+        });
+    }).catch(e => {
+        console.log(e);
+    });
+});
+
+router.get('/universities/e/:id', (req, res) => {
+    const id = req.params.id;
+    University.findOne({ _id: id }).populate('librarian')
+    .then(universityData => {
+        res.render('universities/university', { 
+            universityData,
+            css: [
+                "/assets/css/custom.css",
+                "/assets/libs/sweetalert2/sweetalert2.min.css"
+            ],
+            js: [
+                "/assets/js/axios.min.js",
+                "/assets/libs/sweetalert2/sweetalert2.min.js",
+                "/assets/js/add.librarian.search.js",
+                "/assets/js/university.js"
+            ]
+        });
+    })
+    .catch(err => {
+        res.send(err);
+    });
+});
+
+router.get('/universities/librarian/search', (req, res) => {
+    const q = req.query.q;
+    var re = new RegExp(q,"gi");
+    User.find({ fullName: re, userType: 'Librarian', university: null }).limit(5).then(docs => {
+        res.json(docs);
+    }).catch(err => {
+        console.log(err);
+    });
+});
+
+router.get('/universities/:id/add-librarian/:user', async (req, res) => {
+    const { id, user } = req.params;
+    await University.updateOne({ _id: id }, { $set: { librarian: user } });
+    await User.updateOne({ _id: user }, { $set: { university: id } });
+    const u = await User.findOne({ _id: user }).select('-password');
+    res.json(u);
+});
+
+router.get('/universities/:id/remove-librarian/:user', async (req, res) => {
+    const { id, user } = req.params;
+    await University.updateOne({ _id: id }, { $set: { librarian: null } });
+    const e = await User.updateOne({ _id: user }, { $set: { university: null } });
+    res.json({ status: e });
+});
 
 /** POST ROUTES */
 
@@ -127,7 +242,7 @@ router.post('/universities/set-picture/:id', async (req, res) => {
 
     let dateTime = new Date(university.createdAt);
 
-    const fileN = `${slugify(university.fullName+" "+dateTime.getTime().toString())}${ext}`;
+    const fileN = `${slugify(university.name+" "+dateTime.getTime().toString())}${ext}`;
 
     let finalFile = `/uploads/universities/temp/${fileN}`;
 
@@ -138,11 +253,63 @@ router.post('/universities/set-picture/:id', async (req, res) => {
       if (err){
           res.send(err.message);
       } else {
-        university.tempPhotoUrl = finalFile;
+        university.tempLogoUrl = finalFile;
         await university.save();
-        const url = getUrl('crop-picture', { id: university._id }, req.app.locals.urls);
+        const url = getUrl('crop-university-logo', { id: university._id }, req.app.locals.urls);
         res.redirect(url);
       }
+    });
+});
+
+router.post('/universities/crop-picture/:id', async (req, res) => {
+    
+    if (Object.keys(req.files).length == 0) {
+      return res.status(400).send('No files were uploaded.');
+    }
+
+    const university = await University.findOne({ _id: req.params.id });
+    let dateTime = new Date(university.createdAt);
+
+    let file = req.files.file;
+    let ext = '.jpg';
+    const fileN = `${slugify(university.name+" "+dateTime.getTime().toString())}${ext}`;
+    let finalFile = `/uploads/universities/thumbs/${fileN}`;
+
+    let pathstr = __dirname;
+    pathstr = pathstr.substr(0, pathstr.indexOf('/routes'));
+
+    file.mv(`${path.join(pathstr, 'public')}${finalFile}`, async (err) => {
+      if (err){
+          res.send(err.message);
+      } else {
+        const image = sharp(`${path.join(pathstr, 'public')}${finalFile}`);
+        image
+            .metadata()
+            .then(function(metadata) {
+            return image
+            .resize({
+                width: 300,
+                height: 300,
+                fit: sharp.fit.cover,
+                position: sharp.strategy.entropy
+                })
+                .webp()
+                .toBuffer();
+            })
+            .then(data => {
+                fs.writeFile(`${path.join(pathstr, 'public')}${finalFile}`, data, async (err) => {
+                    if(err) {
+                        return console.log(err);
+                    }
+                    university.logoUrl = finalFile;
+                    await university.save();
+                    res.send(university);
+                });
+            }).catch(err => {
+                console.log(err);
+                res.json({err: err});
+            });
+        }
     });
 });
 

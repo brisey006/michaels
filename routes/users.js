@@ -15,10 +15,10 @@ const addPageCss = [
     "/assets/libs/jquery-nice-select/nice-select.css",
     "/assets/libs/switchery/switchery.min.css",
     "/assets/libs/multiselect/multi-select.css",
-    "/assets/libs/select2/select2.min.css",
     "/assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.css",
     "/assets/libs/flatpickr/flatpickr.min.css",
-    "/assets/libs/dropify/dropify.min.css"
+    "/assets/libs/dropify/dropify.min.css",
+    "/assets/libs/select2/select2.min.css",
 ];
 
 const addPageJs = [
