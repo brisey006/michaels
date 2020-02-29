@@ -23,3 +23,6 @@
 .search-view li:hover{
     background-color: #efefef;
 }
+.card-img-top{
+    max-height: 300px;
+}

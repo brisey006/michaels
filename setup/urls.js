@@ -75,5 +75,31 @@ module.exports = [
     {
         name: 'remove-librarian',
         url: '/universities/:id/remove-librarian/:user'
+    },
+
+    /** BOOKS */
+    {
+        name: 'add-book',
+        url: '/books/add'
+    },
+    {
+        name: 'set-book-cover',
+        url: '/books/set-picture/:id'
+    },
+    {
+        name: 'crop-book-cover',
+        url: '/books/crop-picture/:id'
+    },
+    {
+        name: 'book',
+        url: '/books/e/:id'
+    },
+    {
+        name: 'books',
+        url: '/books/list/:page/:limit'
+    },
+    {
+        name: 'upload-book',
+        url: '/books/upload-book/:id'
     }
 ];

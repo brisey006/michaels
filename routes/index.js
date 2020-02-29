@@ -5,5 +5,6 @@ router.use('/', require('./dashboard'));
 router.use('/', require('./users'));
 router.use('/', require('./profile'));
 router.use('/', require('./universities'));
+router.use('/', require('./books'));
 
 module.exports = router;

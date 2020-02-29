@@ -1,0 +1,73 @@
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="col-12">
+                                    <div class="widget-rounded-circle card-box">
+                                        <div class="row align-items-center">
+                                            <div class="col-auto">
+                                                <div class="avatar-lg" style="height: auto;">
+                                                    <img src="{{book.coverUrl}}" class="img-fluid" alt="user-img" />
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <h5 class="mb-1 mt-2">{{book.title}}</h5>
+                                                <p class="mb-2 text-muted">
+                                                    <a href="{{parseUrl 'set-book-cover' urls id=book._id}}" class="card-link text-custom">Change book cover</a>
+                                                    <a href="{{parseUrl 'upload-book' urls id=book._id}}" class="card-link text-custom">Update book file</a>
+                                                </p>
+                                            </div>
+                                        </div> <!-- end row-->
+                                    </div> <!-- end widget-rounded-circle-->
+                                </div> <!-- end col-->
+                                
+                                <!-- University-Information -->
+                                <div class="col-12">
+                                    <div class="card-box">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="avatar-sm rounded">
+                                                    <i class="fe-alert-circle avatar-title font-22" style="color: #c5c5c5;"></i>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="text-right">
+                                                    <a class="btn btn-danger waves-effect waves-light btn-sm" href="#">
+                                                        <i class="mdi mdi-square-edit-outline avatar-title text-white"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <div class="text-left">
+                                                <p class="text-muted"><strong>Title :</strong> <span class="ml-2">{{book.title}}</span></p>
+
+                                                {{#if book.phoneNumber}}
+                                                    <p class="text-muted"><strong>Mobile :</strong><span class="ml-2">{{book.phoneNumber}}</span></p>
+                                                {{/if}}
+
+                                                <p class="text-muted"><strong>Email :</strong> <span class="ml-2">{{book.email}}</span></p>
+
+                                                {{#if book.address}}
+                                                    <p class="text-muted"><strong>Address :</strong><span class="ml-2">{{book.address}}</span></p>
+                                                {{/if}}
+
+                                                {{#if book.gender}}
+                                                    <p class="text-muted"><strong>Gender :</strong><span class="ml-2">{{book.gender}}</span></p>
+                                                {{/if}}
+
+                                                {{#if book.dateOfBirth}}
+                                                    <p class="text-muted"><strong>Date of birth :</strong><span class="ml-2">{{formatDate book.dateOfBirth}}</span></p>
+                                                {{/if}}
+
+                                                {{#if book.country}}
+                                                    <p class="text-muted"><strong>Country :</strong><span class="ml-2">{{book.country}}</span></p>
+                                                {{/if}}
+                                            </div>
+                                        </div> <!-- end card-box-->
+                                    </div>
+                                </div> <!-- end col -->
+
+                            <div class="col-lg-8">
+                            </div>
+                            <!-- end col -->
+                        </div>
+                        <!-- end row -->

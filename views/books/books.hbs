@@ -1,0 +1,49 @@
+                        <div class="row">
+                            <div class="col-12">
+                                    <div class="card-body">
+                                        <div class="row mb-2">
+                                            <div class="col-md-6">
+                                                <form class="form-inline">
+                                                    <div class="form-group mb-2">
+                                                        <label for="inputPassword2" class="sr-only">Search</label>
+                                                        <input type="search" class="form-control" id="inputPassword2" placeholder="Search...">
+                                                    </div>
+                                                </form>                            
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="text-md-right">
+                                                    <a href="{{parseUrl 'add-book' urls}}">
+                                                        <button type="button" class="btn btn-danger waves-effect waves-light mb-2 mr-2"><i class="mdi mdi-account mr-1"></i> Add Book</button>
+                                                    </a>
+                                                    <button type="button" class="btn btn-success waves-effect waves-light mb-2 mr-1"><i class="mdi mdi-filter"></i></button>
+                                                </div>
+                                            </div><!-- end col-->
+                                        </div>
+                
+                                        <div class="row">
+                                            {{#each books.docs}}
+                                                <div class="card-box col-3 mb-2">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-sm-8">
+                                                            <div class="media">
+                                                                <img class="d-flex align-self-center mr-3" src="{{this.coverUrl}}" alt="Generic placeholder image" height="150">
+                                                                <div class="media-body align-self-center">
+                                                                    <h4 class="mt-0 mb-2 font-16"><a href="{{parseUrl 'book' @root.urls id=this._id}}">{{this.title}}</a></h4>
+                                                                    <p class="mb-1"><b>Author:</b> {{this.author}}</p>
+                                                                    <p class="mb-0"><b>Publisher:</b> {{this.publisher}}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div> <!-- end row -->
+                                                </div> <!-- end card-box-->
+                                            {{/each}}
+                                        </div>
+                                        
+
+                                        <input type="hidden" id="paginationData" value='{ "totalDocs": {{books.totalDocs}}, "limit": {{books.limit}}, "totalPages": {{books.totalPages}}, "page": {{books.page}}, "pagingCounter": {{books.pagingCounter}}, "hasPrevPage": {{books.hasPrevPage}}, "hasNextPage": {{books.hasNextPage}}, "prevPage": {{#if books.prevPage}}{{books.prevPage}}{{else}}null{{/if}}, "nextPage": {{#if books.nextPage}}{{books.nextPage}}{{else}}null{{/if}} }'>
+                                        <input type="hidden" value="{{parseUrl 'books' urls page='toBeReplaced' limit=books.limit}}" id="paginateUrl">
+                                        <ul id="paginate" class="pagination pagination-rounded justify-content-end my-2"></ul>
+                                    </div> <!-- end card-body-->
+                            </div> <!-- end col -->
+                        </div>
+                        <!-- end row -->
