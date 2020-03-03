@@ -29,7 +29,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="physicalAddress">Physical Address</label>
-                                <textarea name="physicalAddress" class="form-control {{#if emailError}}parsley-error{{/if}}" id="physicalAddress" rows="3">{{#if formData}}{{formData.physicalAddress}}{{/if}}</textarea>
+                                <textarea name="physicalAddress" class="form-control {{#if physicalAddressError}}parsley-error{{/if}}" id="physicalAddress" rows="3">{{#if formData}}{{formData.physicalAddress}}{{/if}}</textarea>
                                 {{#if physicalAddressError}}
                                 <ul class="parsley-errors-list filled"><li class="parsley-required">{{physicalAddressError}}</li></ul>
                                 {{/if}}
@@ -41,6 +41,9 @@
                                 <ul class="parsley-errors-list filled"><li class="parsley-required">{{phoneNumberError}}</li></ul>
                                 {{/if}}
                             </div>
+                            {{#eq user.userType 'Librarian'}}
+                            <input type="hidden" name="userType" value="Student">
+                            {{else}}
                             <div class="form-group mb-3">
                                 <label for="gender">User Type</label>
                                 <select class="form-control {{#if userTypeError}}parsley-error{{/if}}" data-toggle="select2" id="userType" name="userType" style="width: 100%;">
@@ -52,6 +55,7 @@
                                 <ul class="parsley-errors-list filled"><li class="parsley-required">{{userTypeError}}</li></ul>
                                 {{/if}}
                             </div>
+                            {{/eq}}
                             <div class="form-group mb-3">
                                 <label for="gender">Gender</label>
                                 <select class="form-control {{#if genderError}}parsley-error{{/if}}" data-toggle="select2" id="gender" name="gender" style="width: 100%;">

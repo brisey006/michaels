@@ -7,7 +7,7 @@ const randomString = require('random-string');
 const path = require('path');
 const fs = require('fs');
 const sharp = require('sharp');
-
+const crypto = require('crypto');
 const Book = require('../models/book');
 const User = require('../models/user');
 const userAction = require('../functions/index').userAction;
@@ -131,9 +131,9 @@ router.get('/books/list/:page/:limit', (req, res) => {
     });
 });
 
-router.get('/books/e/:id', (req, res) => {
-    const id = req.params.id;
-    Book.findOne({ _id: id })
+router.get('/books/e/:slug', (req, res) => {
+    const slug = req.params.slug;
+    Book.findOne({ slug })
     .then(book => {
         res.render('books/book', { 
             book,
@@ -151,6 +151,15 @@ router.get('/books/e/:id', (req, res) => {
     })
     .catch(err => {
         res.send(err);
+    });
+});
+
+router.get('/books/edit/:slug', async (req, res) => {
+    const book = await Book.findOne({ slug: req.params.slug });
+    res.render('books/edit-book', {
+        css: addPageCss,
+        js: addPageJs,
+        book
     });
 });
 
@@ -179,11 +188,28 @@ router.get('/books/:id/remove-librarian/:user', async (req, res) => {
     res.json({ status: e });
 });
 
+router.get('/books/download-book/:slug', async (req, res) => {
+    const user = req.session.user;
+    const book = await Book.findOne({ slug: req.params.slug });
+    const paas = slugify(`${user.createdAt} ${user._id}`);
+    const password = crypto.createHash('md5').update(paas).digest("hex");
+    const algorithm = 'aes-192-cbc';
+    
+    const key = crypto.scryptSync(password, 'salt', 24);
+    
+    const iv = Buffer.alloc(16, 0);
+
+    const cipher = crypto.createCipheriv(algorithm, key, iv);
+
+    const input = fs.createReadStream(`public${book.bookFileUrl}`);
+    input.pipe(cipher).pipe(res);
+});
+
 /** POST ROUTES */
 
 router.post('/books/add', async (req, res) => {
-    const { title, author, publisher, isbn, yearPublished, genre } = req.body;
-    let titleError, authorError, publisherError, isbnError, yearPublishedError, genreError;
+    const { title, author, publisher, description, yearPublished, genre } = req.body;
+    let titleError, authorError, publisherError, yearPublishedError, genreError;
 
     const currentUser = req.session.user._id;
 
@@ -199,10 +225,6 @@ router.post('/books/add', async (req, res) => {
         publisherError = 'Please provide the publisher';
     }
 
-    if (!isbn) {
-        isbnError = 'Please provide ISBN';
-    }
-
     if (!yearPublished) {
         yearPublishedError = 'Please provide year published';
     }
@@ -211,8 +233,9 @@ router.post('/books/add', async (req, res) => {
         genreError = 'Please provide book genre';
     }
 
-    if (!titleError && !authorError && !publisherError && !isbnError && !yearPublishedError && !genreError) {
-        const book = new Book({ title, author, publisher, isbn, yearPublished, genre });
+    if (!titleError && !authorError && !publisherError && !yearPublishedError && !genreError) {
+        const slug = slugify(`${randomString({length: 6, numeric: false})} ${author} ${title}`);
+        const book = new Book({ title, author, description, publisher, year: yearPublished, genre, slug, createdBy: req.session.user._id });
         book.save().then(book => {
             userAction(currentUser, 'create', 'Book', null, book._id)
             .then(() => {
@@ -233,9 +256,15 @@ router.post('/books/add', async (req, res) => {
             css: addPageCss,
             js: addPageJs,
             formData: req.body,
-            titleError, authorError, publisherError, isbnError, yearPublishedError
+            titleError, authorError, publisherError, yearPublishedError, genreError
         });
     }
+});
+
+router.post('/books/edit/:slug', async (req, res) => {
+    await Book.updateOne({ slug: req.params.slug }, { $set: req.body });
+    const url = getUrl('book', { slug: req.params.slug }, req.app.locals.urls);
+    res.redirect(url);
 });
 
 router.post('/books/set-picture/:id', async (req, res) => {
@@ -347,7 +376,7 @@ router.post('/books/upload-book/:id', async (req, res) => {
       } else {
         book.bookFileUrl = finalFile;
         await book.save();
-        const url = getUrl('book', { id: book._id }, req.app.locals.urls);
+        const url = getUrl('book', { slug: book.slug }, req.app.locals.urls);
         res.redirect(url);
       }
     });

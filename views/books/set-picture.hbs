@@ -14,7 +14,7 @@
                                             <div class="clearfix text-right mt-3">
                                                 {{#if setup}}
                                                 <button type="submit" class="btn btn-danger"> <i class="mdi mdi-upload mr-1"></i> Upload</button>
-                                                <a class="btn btn-primary" href="{{parseUrl 'book' urls id=book._id}}"> <i class="mdi mdi-forward mr-1"></i> Skip</a>
+                                                <a class="btn btn-primary" href="{{parseUrl 'book' urls slug=book.slug}}"> <i class="mdi mdi-forward mr-1"></i> Skip</a>
                                                 {{else}}
                                                 <button type="submit" class="btn btn-danger"> <i class="mdi mdi-upload mr-1"></i> Update</button>
                                                 {{/if}}

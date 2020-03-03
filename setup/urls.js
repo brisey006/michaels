@@ -25,6 +25,10 @@ module.exports = [
         url: '/users/list/:userType/:page/:limit'
     },
     {
+        name: 'users-students',
+        url: '/users/students/:page/:limit'
+    },
+    {
         name: 'delete-user',
         url: '/users/delete/:id'
     },
@@ -87,12 +91,16 @@ module.exports = [
         url: '/books/set-picture/:id'
     },
     {
+        name: 'edit-book',
+        url: '/books/edit/:slug'
+    },
+    {
         name: 'crop-book-cover',
         url: '/books/crop-picture/:id'
     },
     {
         name: 'book',
-        url: '/books/e/:id'
+        url: '/books/e/:slug'
     },
     {
         name: 'books',
@@ -101,5 +109,9 @@ module.exports = [
     {
         name: 'upload-book',
         url: '/books/upload-book/:id'
+    },
+    {
+        name: 'download-book',
+        url: '/books/download-book/:slug'
     }
 ];

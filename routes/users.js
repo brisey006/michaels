@@ -97,6 +97,34 @@ router.get('/users/list/:userType/:page/:limit', (req, res) => {
     });
 });
 
+router.get('/users/students/:page/:limit', (req, res) => {
+    const page = req.params.page;
+    const limit = req.params.limit;
+    User.paginate({
+        userType: 'Student',
+        createdBy: req.session.user._id
+    }, {
+        page,
+        limit
+    }).then(users => {
+        const io = req.app.locals.io;
+        res.render('users/users/users', { 
+            users,
+            css: [
+                "/assets/libs/sweetalert2/sweetalert2.min.css"
+            ],
+            js: [
+                "/assets/libs/sweetalert2/sweetalert2.min.js",
+                "/assets/js/axios.min.js",
+                "/assets/js/users.js",
+                "/assets/js/pagination.js"
+            ]
+        });
+    }).catch(e => {
+        console.log(e);
+    });
+});
+
 router.get('/users/delete/:id',async (req, res) => {
     const currentUser = req.session.user._id;
     const userId = req.params.id;
@@ -236,6 +264,8 @@ router.post('/users/add', async (req, res) => {
         countryError = 'Please provide user\'s country';
     }
 
+    const university = req.session.user.university;
+
     if (!firstNameError && !lastNameError && !emailError && !genderError && !userTypeError && !phoneNumberError && !dateOfBirthError && !countryError) {
         const fullName = `${firstName} ${lastName}`;
         const password = randomString({ special: true, length: 8 });
@@ -254,7 +284,8 @@ router.post('/users/add', async (req, res) => {
             password, 
             hashId, 
             createdBy: 
-            currentUser 
+            currentUser,
+            university
         });
     
         bcrypt.genSalt(10, (err, salt) => bcrypt.hash(user.password, salt, (err, hash) => {

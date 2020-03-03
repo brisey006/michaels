@@ -22,15 +22,16 @@
                 
                                         <div class="row">
                                             {{#each books.docs}}
-                                                <div class="card-box col-3 mb-2">
+                                                <div class="card-box col-3 mb-2" style="margin: 15px;">
                                                     <div class="row align-items-center">
                                                         <div class="col-sm-8">
                                                             <div class="media">
                                                                 <img class="d-flex align-self-center mr-3" src="{{this.coverUrl}}" alt="Generic placeholder image" height="150">
                                                                 <div class="media-body align-self-center">
-                                                                    <h4 class="mt-0 mb-2 font-16"><a href="{{parseUrl 'book' @root.urls id=this._id}}">{{this.title}}</a></h4>
+                                                                    <h4 class="mt-0 mb-2 font-16"><a href="{{parseUrl 'book' @root.urls slug=this.slug}}">{{this.title}}</a></h4>
                                                                     <p class="mb-1"><b>Author:</b> {{this.author}}</p>
-                                                                    <p class="mb-0"><b>Publisher:</b> {{this.publisher}}</p>
+                                                                    <p class="mb-1"><b>Publisher:</b> {{this.publisher}}</p>
+                                                                    <p class="mb-0"><b>Year:</b> {{this.year}}</p>
                                                                 </div>
                                                             </div>
                                                         </div>

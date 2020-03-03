@@ -14,6 +14,10 @@
                                 {{/if}}
                             </div>
                             <div class="form-group">
+                                <label for="description">Description <em>(Optional)</em></label>
+                                <textarea name="description" class="form-control" id="description" rows="3">{{#if formData}}{{formData.description}}{{/if}}</textarea>
+                            </div>
+                            <div class="form-group">
                                 <label for="author">Author</label>
                                 <input type="text" id="author" name="author" {{#if formData}} value="{{formData.author}}"{{/if}} class="form-control {{#if authorError}}parsley-error{{/if}}" placeholder="Author">
                                 {{#if authorError}}
@@ -28,13 +32,6 @@
                                 {{/if}}
                             </div>
                             <div class="form-group">
-                                <label for="isbn">ISBN</label>
-                                <input type="text" id="isbn" name="isbn" {{#if formData}} value="{{formData.isbn}}"{{/if}} class="form-control {{#if isbnError}}parsley-error{{/if}}" placeholder="ISBN">
-                                {{#if isbnError}}
-                                <ul class="parsley-errors-list filled"><li class="parsley-required">{{isbnError}}</li></ul>
-                                {{/if}}
-                            </div>
-                            <div class="form-group">
                                 <label for="genre">Genre</label>
                                 <input type="text" id="genre" name="genre" {{#if formData}} value="{{formData.genre}}"{{/if}} class="form-control {{#if genreError}}parsley-error{{/if}}" placeholder="Genre">
                                 {{#if genreError}}
@@ -43,7 +40,7 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label for="datePublished">Year Published</label>
-                                <input data-provide="datepicker" data-date-min-view-mode="2" type="text" name="yearPublished" {{#if formData}} value="{{formData.yearPublished}}"{{/if}} class="form-control {{#if yearPublishedError}}parsley-error{{/if}}" placeholder="Year Published">
+                                <input type="text" id="yearPublished" name="yearPublished" {{#if formData}} value="{{formData.yearPublished}}"{{/if}} class="form-control {{#if yearPublishedError}}parsley-error{{/if}}" placeholder="Year Published">
                                 {{#if yearPublishedError}}
                                 <ul class="parsley-errors-list filled"><li class="parsley-required">{{yearPublishedError}}</li></ul>
                                 {{/if}}

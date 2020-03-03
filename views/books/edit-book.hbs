@@ -1,0 +1,43 @@
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h2>Edit Book</h2>
+                <form method="POST" novalidate> 
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="form-group">
+                                <label for="title">Book Title</label>
+                                <input type="text" id="title" name="title" value="{{book.title}}" class="form-control" placeholder="Book Title">
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description <em>(Optional)</em></label>
+                                <textarea name="description" class="form-control" id="description" rows="3">{{book.description}}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="author">Author</label>
+                                <input type="text" id="author" name="author" value="{{book.author}}" class="form-control" placeholder="Author">
+                            </div>
+                            <div class="form-group">
+                                <label for="publisher">Publisher</label>
+                                <input type="text" id="publisher" name="publisher" value="{{book.publisher}}" class="form-control" placeholder="Publisher">
+                            </div>
+                            <div class="form-group">
+                                <label for="genre">Genre</label>
+                                <input type="text" id="genre" name="genre" value="{{book.genre}}" class="form-control" placeholder="Genre">
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="datePublished">Year Published</label>
+                                <input type="text" id="yearPublished" name="yearPublished" value="{{book.year}}" class="form-control" placeholder="Year Published">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div> <!-- end col-->
+                    </div>
+                    <!-- end row -->
+                </form>
+            </div> <!-- end card-body -->
+        </div> <!-- end card-->
+    </div> <!-- end col-->
+</div>
+<!-- end row-->

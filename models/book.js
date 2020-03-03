@@ -5,17 +5,22 @@ const BookSchema = new mongoose.Schema({
     title: String,
     description: String,
     author: String,
-    datePublished: Date,
+    year: String,
     coverUrl: String,
     tmpCoverUrl: String,
     rating: {
         count: Number,
         total: Number
     },
-    isbn: String,
     bookFileUrl: String,
     publisher: String,
-    genre: String
+    genre: String,
+    slug: {
+        type: String,
+        unique: true
+    },
+    downloads: Number,
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, {
     timestamps: true
 });
