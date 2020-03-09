@@ -11,6 +11,7 @@ const crypto = require('crypto');
 const Book = require('../models/book');
 const User = require('../models/user');
 const userAction = require('../functions/index').userAction;
+const NodeRSA = require('node-rsa');
 
 const addPageCss = [
     "/assets/libs/jquery-nice-select/nice-select.css",
@@ -191,18 +192,28 @@ router.get('/books/:id/remove-librarian/:user', async (req, res) => {
 router.get('/books/download-book/:slug', async (req, res) => {
     const user = req.session.user;
     const book = await Book.findOne({ slug: req.params.slug });
-    const paas = slugify(`${user.createdAt} ${user._id}`);
-    const password = crypto.createHash('md5').update(paas).digest("hex");
-    const algorithm = 'aes-192-cbc';
-    
-    const key = crypto.scryptSync(password, 'salt', 24);
-    
-    const iv = Buffer.alloc(16, 0);
 
-    const cipher = crypto.createCipheriv(algorithm, key, iv);
+    const key = new NodeRSA({b: 1024, encryptionScheme: 'pkcs1'});
+    fs.writeFile('key.pem', key.exportKey('public'), () => {
+        res.sendfile('key.pem');
+    });
+    
 
-    const input = fs.createReadStream(`public${book.bookFileUrl}`);
-    input.pipe(cipher).pipe(res);
+    // const paas = slugify(`${user.createdAt} ${user._id}`);
+    // const password = crypto.createHash('md5').update(paas).digest("hex");
+    // const key = crypto.scryptSync(password, 'salt', 24);
+    // console.log(key);
+    
+    // const algorithm = 'aes-192-cbc';
+    
+    // const key = crypto.scryptSync(password, 'salt', 24);
+    
+    // const iv = Buffer.alloc(16, 0);
+
+    // const cipher = crypto.createCipheriv(algorithm, key, iv);
+
+    // const input = fs.createReadStream(`public${book.bookFileUrl}`);
+    // input.pipe(cipher).pipe(res);
 });
 
 /** POST ROUTES */

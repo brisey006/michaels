@@ -452,5 +452,44 @@ router.post('/users/login', async (req, res, next) => {
       )(req, res, next);
 });
 
+router.post('/api/users/login', async (req, res, next) => {
+    passport.authenticate(
+        "local",
+        { session: true },
+        (err, passportUser, info) => {
+          if (err) {
+            res.json({ err: err.message });
+          }
+    
+          if (passportUser) {
+            const user = passportUser;
+            const today = new Date();
+            const expirationDate = new Date(today);
+            expirationDate.setDate(today.getDate() + 60);
+    
+            jwt.sign(
+              {
+                email: user.email,
+                id: user._id,
+                exp: parseInt(expirationDate.getTime() / 1000, 10),
+                lastLogin: Date.now
+              },
+              "20061995",
+              (err, token) => {
+                if (err) {
+                    res.json({ err: err.message });
+                } else {
+                  res.json({
+                      token
+                  });
+                }
+              }
+            );
+          } else {
+            res.json({ err: err.message });
+          }
+        }
+      )(req, res, next);
+});
 
 module.exports = router;

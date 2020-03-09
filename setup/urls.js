@@ -40,6 +40,10 @@ module.exports = [
         name: 'users-profile',
         url: '/users/profile/e/:id'
     },
+    {
+        name: 'generate-keys',
+        url: '/users/generate-keys'
+    },
 
     /** USER PROFILE */
     {

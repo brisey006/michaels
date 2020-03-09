@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
+const downlodedBooks = new mongoose.Schema({
+    book: { type: mongoose.Schema.Types.ObjectId, ref: 'University' },
+    link: String
+});
+
 const UserSchema = new mongoose.Schema({
     firstName: {
         type: String,
@@ -42,6 +47,8 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
+    downloadedBooks: downlodedBooks,
+    publicKey: String,
     university: { type: mongoose.Schema.Types.ObjectId, ref: 'University' },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, {
