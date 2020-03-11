@@ -48,7 +48,6 @@ const UserSchema = new mongoose.Schema({
         default: true
     },
     downloadedBooks: downlodedBooks,
-    publicKey: String,
     university: { type: mongoose.Schema.Types.ObjectId, ref: 'University' },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, {

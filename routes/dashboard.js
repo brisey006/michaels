@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const ensureAuthenticated = require('../config/auth').ensureAuthenticated;
 
-router.get('/', async (req, res) => {
-    //res.json(recordsData);
-
+router.get('/', ensureAuthenticated, async (req, res) => {
     res.render('index');
 });
 

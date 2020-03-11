@@ -10,6 +10,8 @@ const randomString = require('random-string');
 const path = require('path');
 const fs = require('fs');
 const sharp = require('sharp');
+const NodeRSA = require('node-rsa');
+const ensureAuthenticated = require('../config/auth').ensureAuthenticated;
 
 const addPageCss = [
     "/assets/libs/jquery-nice-select/nice-select.css",
@@ -55,12 +57,11 @@ router.get('/users/register', (req, res) => {
 });
 
 router.get('/users/logout', (req, res) => {
-    req.session.destroy(() => {
-        res.clearCookie('token').render('logout', { layout: false });
-    });
+    req.logOut();
+    res.redirect('/users/login');
 });
 
-router.get('/users/add', (req, res) => {
+router.get('/users/add', ensureAuthenticated, (req, res) => {
     const countries = require('../data/countries');
     res.render('users/users/add-user', {
         css: addPageCss,
@@ -69,7 +70,7 @@ router.get('/users/add', (req, res) => {
     });
 });
 
-router.get('/users/list/:userType/:page/:limit', (req, res) => {
+router.get('/users/list/:userType/:page/:limit', ensureAuthenticated, (req, res) => {
     const userType = req.params.userType;
     const page = req.params.page;
     const limit = req.params.limit;
@@ -97,7 +98,7 @@ router.get('/users/list/:userType/:page/:limit', (req, res) => {
     });
 });
 
-router.get('/users/students/:page/:limit', (req, res) => {
+router.get('/users/students/:page/:limit', ensureAuthenticated, (req, res) => {
     const page = req.params.page;
     const limit = req.params.limit;
     User.paginate({
@@ -125,7 +126,7 @@ router.get('/users/students/:page/:limit', (req, res) => {
     });
 });
 
-router.get('/users/delete/:id',async (req, res) => {
+router.get('/users/delete/:id', ensureAuthenticated, async (req, res) => {
     const currentUser = req.session.user._id;
     const userId = req.params.id;
     const user = await User.findOne({ _id: userId });
@@ -142,7 +143,7 @@ router.get('/users/delete/:id',async (req, res) => {
     });
 });
 
-router.get('/users/set-picture/:id', (req, res) => {
+router.get('/users/set-picture/:id', ensureAuthenticated, (req, res) => {
     const setup = req.query.setup;
     User.findOne({ _id: req.params.id })
     .then(userData => {
@@ -163,7 +164,7 @@ router.get('/users/set-picture/:id', (req, res) => {
     });
 });
 
-router.get('/users/crop-picture/:id', (req, res) => {
+router.get('/users/crop-picture/:id', ensureAuthenticated, (req, res) => {
     User.findOne({ _id: req.params.id })
     .then(user => {
         res.render('users/users/crop-picture', {
@@ -184,7 +185,7 @@ router.get('/users/crop-picture/:id', (req, res) => {
     });
 });
 
-router.get('/users/edit/:id', async (req, res) => {
+router.get('/users/edit/:id', ensureAuthenticated, async (req, res) => {
     const userId = req.params.id;
     const user = await User.findOne({ _id: userId }).select('-password');
     let current_datetime = new Date(user.dateOfBirth);
@@ -198,13 +199,13 @@ router.get('/users/edit/:id', async (req, res) => {
     });
 });
 
-router.get('/users/u/:id', (req, res) => {
+router.get('/users/u/:id', ensureAuthenticated, (req, res) => {
     const db = req.app.locals.db;
     const id = req.params.id;
     const rtype = req.query.rtype;
 });
 
-router.get('/users/profile/e/:id', (req, res) => {
+router.get('/users/profile/e/:id', ensureAuthenticated, (req, res) => {
     const id = req.params.id;
     User.findOne({ _id: id })
     .then(userData => {
@@ -217,7 +218,7 @@ router.get('/users/profile/e/:id', (req, res) => {
 
 /** Post Requests */
 
-router.post('/users/add', async (req, res) => {
+router.post('/users/add', ensureAuthenticated, async (req, res) => {
     const { firstName, lastName, email, physicalAddress, phoneNumber, gender, userType, dateOfBirth, country } = req.body;
     let firstNameError, lastNameError, emailError, physicalAddressError, phoneNumberError, genderError, userTypeError, dateOfBirthError, countryError;
 
@@ -317,7 +318,7 @@ router.post('/users/add', async (req, res) => {
     }
 });
 
-router.post('/users/set-picture/:id', async (req, res) => {
+router.post('/users/set-picture/:id', ensureAuthenticated, async (req, res) => {
     
     if (Object.keys(req.files).length == 0) {
       return res.status(400).send('No files were uploaded.');
@@ -350,7 +351,7 @@ router.post('/users/set-picture/:id', async (req, res) => {
     });
 });
 
-router.post('/users/crop-picture/:id', async (req, res) => {
+router.post('/users/crop-picture/:id', ensureAuthenticated, async (req, res) => {
     
     if (Object.keys(req.files).length == 0) {
       return res.status(400).send('No files were uploaded.');
@@ -414,82 +415,15 @@ router.post('/users/edit/:id', async (req, res) => {
     res.redirect(url);
 });
 
-router.post('/users/login', async (req, res, next) => {
+router.post('/users/login', async (req, res) => {
     passport.authenticate(
-        "local",
-        { session: true },
-        (err, passportUser, info) => {
-          if (err) {
-            res.render(`login`, { auth: true, err: err.message, data: req.body, layout: false });
-          }
-    
-          if (passportUser) {
-            const user = passportUser;
-            const today = new Date();
-            const expirationDate = new Date(today);
-            expirationDate.setDate(today.getDate() + 60);
-    
-            jwt.sign(
-              {
-                email: user.email,
-                id: user._id,
-                exp: parseInt(expirationDate.getTime() / 1000, 10),
-                lastLogin: Date.now
-              },
-              "20061995",
-              (err, token) => {
-                if (err) {
-                  res.render(`login`, { auth: true, err: err.message, data: req.body, layout: false });
-                } else {
-                  res.cookie('token', token).redirect('/');
-                }
-              }
-            );
-          } else {
-            res.render(`login`, { auth: true, err: info.message, data: req.body, layout: false });
-          }
-        }
-      )(req, res, next);
-});
-
-router.post('/api/users/login', async (req, res, next) => {
-    passport.authenticate(
-        "local",
-        { session: true },
-        (err, passportUser, info) => {
-          if (err) {
-            res.json({ err: err.message });
-          }
-    
-          if (passportUser) {
-            const user = passportUser;
-            const today = new Date();
-            const expirationDate = new Date(today);
-            expirationDate.setDate(today.getDate() + 60);
-    
-            jwt.sign(
-              {
-                email: user.email,
-                id: user._id,
-                exp: parseInt(expirationDate.getTime() / 1000, 10),
-                lastLogin: Date.now
-              },
-              "20061995",
-              (err, token) => {
-                if (err) {
-                    res.json({ err: err.message });
-                } else {
-                  res.json({
-                      token
-                  });
-                }
-              }
-            );
-          } else {
-            res.json({ err: err.message });
-          }
-        }
-      )(req, res, next);
+        'local',
+        { 
+            failureRedirect: '/users/login',
+            successRedirect: '/'
+        },
+        
+      )(req, res);
 });
 
 module.exports = router;

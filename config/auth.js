@@ -1,35 +1,41 @@
 const jwt = require("jsonwebtoken");
-const User = require('../models/user');
 
-const _selfAuth = (req, res, next) => {
-  if (req.url == '/users/login' || req.url == '/users/register' || req.url.indexOf('/setup') > -1) {
+const ensureAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    res.locals.user = req.user;
     next();
   } else {
-    if (req.session.user == undefined) {
-      if (req.cookies.token !== undefined) {
-        jwt.verify(req.cookies.token, "20061995", async (err, authData) => {
-          if (err) {
-            res.redirect('/users/login');
-          } else {
-            User.findOne({ email: authData.email }).then(user => {
-              req.session.user = user;
-              res.locals.user = req.session.user;
-              next();
-            }).catch(e => {
-              throw e;
-            });
-          }
-        });
-      } else {
-        res.redirect('/users/login');
-      }
-    } else {
-      res.locals.user = req.session.user;
-      next();
-    }
+    res.redirect('/users/login');
   }
 }
 
+function verifyToken(req, res, next) {
+  const bearerHeader = req.headers['authorization'];
+  
+  if(typeof bearerHeader !== 'undefined') {
+    let bearerToken;
+    if (bearerHeader.indexOf(' ') > -1) {
+      const bearer = bearerHeader.split(' ');
+      bearerToken = bearer[1];
+    } else {
+      bearerToken = bearerHeader;
+    }
+    
+    jwt.verify(bearerToken, '20061995', (err, authData) => {
+      if(err) {
+        res.sendStatus(403);
+      } else {
+        req.user = authData;
+        next();
+      }
+    });
+  } else {
+    res.sendStatus(403);
+  }
+
+}
+
 module.exports = {
-  _selfAuth
+  ensureAuthenticated,
+  verifyToken
 }

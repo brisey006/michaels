@@ -7,4 +7,7 @@ router.use('/', require('./profile'));
 router.use('/', require('./universities'));
 router.use('/', require('./books'));
 
+/** API REQUESTS */
+router.use('/api', require('./api/'));
+
 module.exports = router;

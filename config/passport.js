@@ -32,11 +32,11 @@ module.exports = (passport) => {
       });
       
       passport.deserializeUser((id, done) => {
-        db.collection('users').findOne({ _id: id })
+        User.findOne({ _id: id })
         .then(user => {
-            done(err, user);
+            done(null, user);
         }).catch(err => {
-            console.log(err);
+            done(err, null);
         });
       });
 }

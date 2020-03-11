@@ -10,6 +10,7 @@ const passport = require('passport');
 const session = require('express-session');
 const helpers = require('handlebars-helpers')();
 const mongoose = require('mongoose');
+const flash = require('connect-flash');
 
 const hbshelpers = require('./config/hbshelpers');
 require('./config/passport')(passport);
@@ -35,11 +36,18 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(session({ 
     secret: 'tue/20/06/1995', 
-    resave: false,
+    resave: true,
     saveUninitialized: true,
 }));
+
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(flash());
+
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(require('./config/auth')._selfAuth);
+//app.use(require('./config/auth')._selfAuth);
 app.use(require('./config/urls'));
 
 mongoose.connect('mongodb://localhost:27017/michaels', { 

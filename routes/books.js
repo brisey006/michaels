@@ -12,6 +12,7 @@ const Book = require('../models/book');
 const User = require('../models/user');
 const userAction = require('../functions/index').userAction;
 const NodeRSA = require('node-rsa');
+const ensureAuthenticated = require('../config/auth').ensureAuthenticated;
 
 const addPageCss = [
     "/assets/libs/jquery-nice-select/nice-select.css",
@@ -38,14 +39,14 @@ const addPageJs = [
     "/assets/js/pages/form-fileuploads.init.js"
 ];
 
-router.get('/books/add', (req, res) => {
+router.get('/books/add', ensureAuthenticated, (req, res) => {
     res.render('books/add-book', {
         css: addPageCss,
         js: addPageJs,
     });
 });
 
-router.get('/books/set-picture/:id', (req, res) => {
+router.get('/books/set-picture/:id', ensureAuthenticated, (req, res) => {
     const setup = req.query.setup;
     Book.findOne({ _id: req.params.id })
     .then(book => {
@@ -66,7 +67,7 @@ router.get('/books/set-picture/:id', (req, res) => {
     });
 });
 
-router.get('/books/crop-picture/:id', (req, res) => {
+router.get('/books/crop-picture/:id', ensureAuthenticated, (req, res) => {
     Book.findOne({ _id: req.params.id })
     .then(book => {
         res.render('books/crop-picture', {
@@ -87,7 +88,7 @@ router.get('/books/crop-picture/:id', (req, res) => {
     });
 });
 
-router.get('/books/upload-book/:id', (req, res) => {
+router.get('/books/upload-book/:id', ensureAuthenticated, (req, res) => {
     const setup = req.query.setup;
     Book.findOne({ _id: req.params.id })
     .then(book => {
@@ -108,7 +109,7 @@ router.get('/books/upload-book/:id', (req, res) => {
     });
 });
 
-router.get('/books/list/:page/:limit', (req, res) => {
+router.get('/books/list/:page/:limit', ensureAuthenticated, (req, res) => {
     const page = req.params.page;
     const limit = req.params.limit;
     Book.paginate({}, {
@@ -132,7 +133,7 @@ router.get('/books/list/:page/:limit', (req, res) => {
     });
 });
 
-router.get('/books/e/:slug', (req, res) => {
+router.get('/books/e/:slug', ensureAuthenticated, (req, res) => {
     const slug = req.params.slug;
     Book.findOne({ slug })
     .then(book => {
@@ -155,7 +156,7 @@ router.get('/books/e/:slug', (req, res) => {
     });
 });
 
-router.get('/books/edit/:slug', async (req, res) => {
+router.get('/books/edit/:slug', ensureAuthenticated, async (req, res) => {
     const book = await Book.findOne({ slug: req.params.slug });
     res.render('books/edit-book', {
         css: addPageCss,
@@ -164,7 +165,7 @@ router.get('/books/edit/:slug', async (req, res) => {
     });
 });
 
-router.get('/books/librarian/search', (req, res) => {
+router.get('/books/librarian/search', ensureAuthenticated, (req, res) => {
     const q = req.query.q;
     var re = new RegExp(q,"gi");
     User.find({ fullName: re, userType: 'Librarian', university: null }).limit(5).then(docs => {
@@ -174,7 +175,7 @@ router.get('/books/librarian/search', (req, res) => {
     });
 });
 
-router.get('/books/:id/add-librarian/:user', async (req, res) => {
+router.get('/books/:id/add-librarian/:user', ensureAuthenticated, async (req, res) => {
     const { id, user } = req.params;
     await University.updateOne({ _id: id }, { $set: { librarian: user } });
     await User.updateOne({ _id: user }, { $set: { university: id } });
@@ -182,14 +183,14 @@ router.get('/books/:id/add-librarian/:user', async (req, res) => {
     res.json(u);
 });
 
-router.get('/books/:id/remove-librarian/:user', async (req, res) => {
+router.get('/books/:id/remove-librarian/:user', ensureAuthenticated, async (req, res) => {
     const { id, user } = req.params;
     await University.updateOne({ _id: id }, { $set: { librarian: null } });
     const e = await User.updateOne({ _id: user }, { $set: { university: null } });
     res.json({ status: e });
 });
 
-router.get('/books/download-book/:slug', async (req, res) => {
+router.get('/books/download-book/:slug', ensureAuthenticated, async (req, res) => {
     const user = req.session.user;
     const book = await Book.findOne({ slug: req.params.slug });
 
@@ -197,28 +198,11 @@ router.get('/books/download-book/:slug', async (req, res) => {
     fs.writeFile('key.pem', key.exportKey('public'), () => {
         res.sendfile('key.pem');
     });
-    
-
-    // const paas = slugify(`${user.createdAt} ${user._id}`);
-    // const password = crypto.createHash('md5').update(paas).digest("hex");
-    // const key = crypto.scryptSync(password, 'salt', 24);
-    // console.log(key);
-    
-    // const algorithm = 'aes-192-cbc';
-    
-    // const key = crypto.scryptSync(password, 'salt', 24);
-    
-    // const iv = Buffer.alloc(16, 0);
-
-    // const cipher = crypto.createCipheriv(algorithm, key, iv);
-
-    // const input = fs.createReadStream(`public${book.bookFileUrl}`);
-    // input.pipe(cipher).pipe(res);
 });
 
 /** POST ROUTES */
 
-router.post('/books/add', async (req, res) => {
+router.post('/books/add', ensureAuthenticated, async (req, res) => {
     const { title, author, publisher, description, yearPublished, genre } = req.body;
     let titleError, authorError, publisherError, yearPublishedError, genreError;
 
@@ -272,13 +256,13 @@ router.post('/books/add', async (req, res) => {
     }
 });
 
-router.post('/books/edit/:slug', async (req, res) => {
+router.post('/books/edit/:slug', ensureAuthenticated, async (req, res) => {
     await Book.updateOne({ slug: req.params.slug }, { $set: req.body });
     const url = getUrl('book', { slug: req.params.slug }, req.app.locals.urls);
     res.redirect(url);
 });
 
-router.post('/books/set-picture/:id', async (req, res) => {
+router.post('/books/set-picture/:id', ensureAuthenticated, async (req, res) => {
     
     if (Object.keys(req.files).length == 0) {
       return res.status(400).send('No files were uploaded.');
@@ -311,7 +295,7 @@ router.post('/books/set-picture/:id', async (req, res) => {
     });
 });
 
-router.post('/books/crop-picture/:id', async (req, res) => {
+router.post('/books/crop-picture/:id', ensureAuthenticated, async (req, res) => {
     
     if (Object.keys(req.files).length == 0) {
       return res.status(400).send('No files were uploaded.');
@@ -360,13 +344,20 @@ router.post('/books/crop-picture/:id', async (req, res) => {
     });
 });
 
-router.post('/books/upload-book/:id', async (req, res) => {
-    
+router.post('/books/upload-book/:id', ensureAuthenticated, async (req, res) => {
+    let pathstr = __dirname;
+    pathstr = pathstr.substr(0, pathstr.indexOf('/routes'));
+
     if (Object.keys(req.files).length == 0) {
       return res.status(400).send('No files were uploaded.');
     }
 
-    const book = await Book.findOne({ _id: req.params.id });
+    const book = await Book.findOne({ _id: req.params.id }).populate('createdBy');
+    const user = book.createdBy;
+
+    if (fs.existsSync(pathstr+book.bookFileUrl)) {
+        fs.unlinkSync(pathstr+book.bookFileUrl);
+    }
 
     let file = req.files.file;
     let fileName = req.files.file.name;
@@ -376,21 +367,45 @@ router.post('/books/upload-book/:id', async (req, res) => {
 
     const fileN = `${slugify(book.title+" "+dateTime.getTime().toString())}${ext}`;
 
-    let finalFile = `/uploads/books/files/${fileN}`;
-
-    let pathstr = __dirname;
-    pathstr = pathstr.substr(0, pathstr.indexOf('/routes'));
+    let finalFile = `/books/${fileN}`;
     
-    file.mv(`${path.join(pathstr, 'public')}${finalFile}`, async (err) => {
+    file.mv(pathstr+finalFile, async (err) => {
       if (err){
           res.send(err.message);
       } else {
-        book.bookFileUrl = finalFile;
-        await book.save();
-        const url = getUrl('book', { slug: book.slug }, req.app.locals.urls);
-        res.redirect(url);
+
+        const paas = slugify(`${user.createdAt} ${user._id}`);
+        const password = crypto.createHash('md5').update(paas).digest("hex");
+        const key = crypto.scryptSync(password, 'salt', 24);
+        const finalFileName = crypto.createHash('md5').update(`${Date.now()}`).digest("hex");
+        
+        const algorithm = 'aes-192-cbc';
+        
+        const iv = Buffer.alloc(16, 0);
+
+        const cipher = crypto.createCipheriv(algorithm, key, iv);
+
+        const input = fs.createReadStream(pathstr+finalFile);
+        const output = fs.createWriteStream(pathstr+`/books/${finalFileName}.pdf`);
+        input.pipe(cipher).pipe(output);
+
+        output.on('close', async () => {
+            input.close();
+            output.close();
+            fs.unlinkSync(pathstr+finalFile);
+
+            const key = fs.readFileSync(`${pathstr}/config/.public.pem`, 'utf8');
+            let publicKey = new NodeRSA(key);
+            const encrypted = publicKey.encrypt(`/books/${finalFileName}.pdf`, 'base64');
+            book.file = encrypted;
+            await book.save();
+            const url = getUrl('book', { slug: book.slug }, req.app.locals.urls);
+            res.redirect(url);
+        });
       }
     });
+
+
 });
 
 module.exports = router;

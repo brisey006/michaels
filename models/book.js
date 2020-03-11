@@ -12,7 +12,7 @@ const BookSchema = new mongoose.Schema({
         count: Number,
         total: Number
     },
-    bookFileUrl: String,
+    file: String,
     publisher: String,
     genre: String,
     slug: {
