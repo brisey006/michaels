@@ -5,7 +5,7 @@ const BookSchema = new mongoose.Schema({
     title: String,
     description: String,
     author: String,
-    year: String,
+    year: Number,
     coverUrl: String,
     tmpCoverUrl: String,
     rating: {
@@ -13,12 +13,14 @@ const BookSchema = new mongoose.Schema({
         total: Number
     },
     file: String,
+    signature: String,
     publisher: String,
     genre: String,
     slug: {
         type: String,
         unique: true
     },
+    size: Number,
     downloads: Number,
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, {

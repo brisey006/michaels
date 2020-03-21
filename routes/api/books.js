@@ -18,7 +18,6 @@ const User = require('../../models/user');
 router.get('/books/list/:page/:limit', verifyToken, (req, res) => {
     const page = req.params.page;
     const limit = req.params.limit;
-    console.log(req.user);
     Book.paginate({}, {
         page,
         limit,
@@ -29,23 +28,11 @@ router.get('/books/list/:page/:limit', verifyToken, (req, res) => {
     });
 });
 
-router.get('/books/e/:slug', verifyToken, (req, res) => {
-    const slug = req.params.slug;
-    Book.findOne({ slug })
+router.get('/books/e/:id', verifyToken, (req, res) => {
+    const id = req.params.id;
+    Book.findOne({ _id: id })
     .then(book => {
-        res.render('books/book', { 
-            book,
-            css: [
-                "/assets/css/custom.css",
-                "/assets/libs/sweetalert2/sweetalert2.min.css"
-            ],
-            js: [
-                "/assets/js/axios.min.js",
-                "/assets/libs/sweetalert2/sweetalert2.min.js",
-                "/assets/js/add.librarian.search.js",
-                "/assets/js/university.js"
-            ]
-        });
+        res.json(book);
     })
     .catch(err => {
         res.send(err);
@@ -53,9 +40,14 @@ router.get('/books/e/:slug', verifyToken, (req, res) => {
 });
 
 router.get('/books/request-token/:id', verifyToken, async (req, res) => {
+    let pathstr = __dirname;
+    pathstr = pathstr.substr(0, pathstr.indexOf('/routes'));
     const book = await Book.findOne({ _id: req.params.id });
-    const linkId = randomString({ length: 32 });
-    await new Link({ filePath: book.bookFileUrl, linkId }).save();
+    
+    const rsaKey = fs.readFileSync(`${pathstr}/config/.private.pem`, 'utf8');
+    let privateKey = new NodeRSA(rsaKey);
+    const paas = privateKey.decrypt(book.signature, 'utf8');
+
     let publicKeyString;
     const keyPath = `keys/${req.user._id}-public.pem`;
     if (fs.existsSync(keyPath)) {
@@ -64,19 +56,14 @@ router.get('/books/request-token/:id', verifyToken, async (req, res) => {
 
         let publicKey = new NodeRSA(publicKeyString);
 
-        const encrypted = publicKey.encrypt(linkId, 'base64');
+        const encrypted = publicKey.encrypt(paas, 'base64');
         res.send(encrypted);
-        setTimeout(() => {
-            Link.deleteOne({ linkId }).then(() => {
-                console.log('Link removed');
-            });
-        }, 5000);
     } else {
         res.sendStatus(403);
     }
 });
 
-router.get('/books/get-key/keys/:path', (req, res) => {
+router.get('/books/get-private/keys/:path', (req, res) => {
     let filePath = 'keys/'+req.params.path;
     let dirPath = __dirname;
     dirPath = dirPath.substring(0, dirPath.lastIndexOf('/'));
@@ -95,43 +82,51 @@ router.get('/books/get-key/keys/:path', (req, res) => {
     }
 });
 
-router.post('/books/verify-download', verifyToken, (req, res) => {
-    jwt.verify(req.body.token, '20061995', (err, data) => {
-        if(err) {
-          res.sendStatus(403);
-        } else {
-          res.send(data);
-        }
-    });
+router.get('/books/get-public/keys', (req, res) => {
+    let pathstr = __dirname;
+    pathstr = pathstr.substr(0, pathstr.indexOf('/routes'));
+    const path = `${pathstr}/config/.public.pem`;
+    if (fs.existsSync(path)) {
+        const input = fs.createReadStream(path);
+        input.pipe(res);
+        input.on('end', () => {
+            input.close();
+        });
+    } else {
+        res.sendStatus(403);
+    }
 });
 
-router.get('/books/download-book/:id', verifyToken, async (req, res) => {
+router.post('/books/download-book/:id', verifyToken, async (req, res) => {
+    console.log(req.body);
     
     let pathstr = __dirname;
     pathstr = pathstr.substr(0, pathstr.indexOf('/routes'));
     const book = await Book.findOne({ _id: req.params.id }).populate('createdBy');
 
-    const rsaKey = fs.readFileSync(`${pathstr}/config/.private.pem`, 'utf8');
-    let privateKey = new NodeRSA(rsaKey);
-    const decrypted = privateKey.decrypt(book.file, 'utf8');
-    console.log(decrypted);
+    try {
+        const rsaKey = fs.readFileSync(`${pathstr}/config/.private.pem`, 'utf8');
+        let privateKey = new NodeRSA(rsaKey);
+        const decrypted = privateKey.decrypt(book.file, 'utf8');
+        if (fs.existsSync(pathstr+decrypted)) {
+            const paas = privateKey.decrypt(req.body.file, 'utf8');
+            console.log(paas);
+            const password = crypto.createHash('md5').update(paas).digest("hex");
+            const key = crypto.scryptSync(password, 'salt', 24);
+            
+            const algorithm = 'aes-192-cbc';
+            
+            const iv = Buffer.alloc(16, 0);
 
-    if (fs.existsSync(pathstr+decrypted)) {
-        const user = book.createdBy;
-        const paas = slugify(`${user.createdAt} ${user._id}`);
-        const password = crypto.createHash('md5').update(paas).digest("hex");
-        const key = crypto.scryptSync(password, 'salt', 24);
-        
-        const algorithm = 'aes-192-cbc';
-        
-        const iv = Buffer.alloc(16, 0);
+            const decipher = crypto.createDecipheriv(algorithm, key, iv);
 
-        const decipher = crypto.createDecipheriv(algorithm, key, iv);
-
-        const input = fs.createReadStream(pathstr+decrypted);
-        input.pipe(decipher).pipe(res);
-    } else {
-        res.send('file not available');
+            const input = fs.createReadStream(pathstr+decrypted);
+            input.pipe(decipher).pipe(res);
+        } else {
+            res.send('file not available');
+        }
+    } catch (e) {
+        console.log('error occured');
     }
 });
 

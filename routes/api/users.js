@@ -50,7 +50,7 @@ router.post('/users/login', async (req, res) => {
                         token,
                         ...user._doc,
                         password: undefined,
-                        keyPath: `/api/books/get-key/${keyPath}`
+                        keyPath: `/api/books/get-private/${keyPath}`
                     });
                 }
               }

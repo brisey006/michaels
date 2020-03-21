@@ -191,7 +191,7 @@ router.get('/books/:id/remove-librarian/:user', ensureAuthenticated, async (req,
 });
 
 router.get('/books/download-book/:slug', ensureAuthenticated, async (req, res) => {
-    const user = req.session.user;
+    const user = req.user;
     const book = await Book.findOne({ slug: req.params.slug });
 
     const key = new NodeRSA({b: 1024, encryptionScheme: 'pkcs1'});
@@ -206,7 +206,7 @@ router.post('/books/add', ensureAuthenticated, async (req, res) => {
     const { title, author, publisher, description, yearPublished, genre } = req.body;
     let titleError, authorError, publisherError, yearPublishedError, genreError;
 
-    const currentUser = req.session.user._id;
+    const currentUser = req.user._id;
 
     if (!title) {
         titleError = 'Please provide book title';
@@ -230,7 +230,7 @@ router.post('/books/add', ensureAuthenticated, async (req, res) => {
 
     if (!titleError && !authorError && !publisherError && !yearPublishedError && !genreError) {
         const slug = slugify(`${randomString({length: 6, numeric: false})} ${author} ${title}`);
-        const book = new Book({ title, author, description, publisher, year: yearPublished, genre, slug, createdBy: req.session.user._id });
+        const book = new Book({ title, author, description, publisher, year: yearPublished, genre, slug, createdBy: req.user._id });
         book.save().then(book => {
             userAction(currentUser, 'create', 'Book', null, book._id)
             .then(() => {
@@ -322,7 +322,7 @@ router.post('/books/crop-picture/:id', ensureAuthenticated, async (req, res) => 
             .then(function(metadata) {
             return image
             .resize({
-                height: 150,
+                height: 500,
                 })
                 .webp()
                 .toBuffer();
@@ -374,7 +374,7 @@ router.post('/books/upload-book/:id', ensureAuthenticated, async (req, res) => {
           res.send(err.message);
       } else {
 
-        const paas = slugify(`${user.createdAt} ${user._id}`);
+        const paas = randomString({ length: 32, numeric: true, letters: true, special: true });
         const password = crypto.createHash('md5').update(paas).digest("hex");
         const key = crypto.scryptSync(password, 'salt', 24);
         const finalFileName = crypto.createHash('md5').update(`${Date.now()}`).digest("hex");
@@ -384,6 +384,10 @@ router.post('/books/upload-book/:id', ensureAuthenticated, async (req, res) => {
         const iv = Buffer.alloc(16, 0);
 
         const cipher = crypto.createCipheriv(algorithm, key, iv);
+
+        const stats = fs.statSync(pathstr+finalFile)
+        var fileSizeInBytes = stats["size"];
+
 
         const input = fs.createReadStream(pathstr+finalFile);
         const output = fs.createWriteStream(pathstr+`/books/${finalFileName}.pdf`);
@@ -397,7 +401,10 @@ router.post('/books/upload-book/:id', ensureAuthenticated, async (req, res) => {
             const key = fs.readFileSync(`${pathstr}/config/.public.pem`, 'utf8');
             let publicKey = new NodeRSA(key);
             const encrypted = publicKey.encrypt(`/books/${finalFileName}.pdf`, 'base64');
+            const signature = publicKey.encrypt(paas, 'base64');
             book.file = encrypted;
+            book.signature = signature;
+            book.size = fileSizeInBytes;
             await book.save();
             const url = getUrl('book', { slug: book.slug }, req.app.locals.urls);
             res.redirect(url);
